@@ -1,0 +1,31 @@
+#pragma kernel UpdateVortex
+#pragma kernel UpdateTracer
+
+#define THREAD_NUM 10
+
+//vortex particle
+RWTexture2D<float3> vortexPosition;
+RWTexture2D<float3> vortexVelocity;
+RWTexture2D<float3> vortexVorticity;
+
+//tracer particle
+RWTexture2D<float3> tracerPosition;
+RWTexture2D<float3> tracerVelocity;
+RWTexture2D<float3> tracerVorticity;
+
+
+[numthreads(THREAD_NUM, 1, 1)]
+void UpdateVortex(uint3 id : SV_DispatchThreadID)
+{
+    //TODO
+
+    
+}
+
+
+[numthreads(THREAD_NUM, 1, 1)]
+void UpdateTracer(uint3 id : SV_DispatchThreadID){
+
+    //TODO
+
+}
