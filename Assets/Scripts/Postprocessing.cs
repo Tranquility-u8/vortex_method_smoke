@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-[ExecuteInEditMode]
+namespace VortexMethod
+{
+    [ExecuteInEditMode]
 public class Postprocessing : MonoBehaviour
 {
     public Shader PostProcessingShader;
@@ -15,12 +16,10 @@ public class Postprocessing : MonoBehaviour
         {
             if (PostProcessingShader == null)
             {
-                Debug.LogError("没有赋予Shader");
                 return null;
             }
             if (!PostProcessingShader.isSupported)
             {
-                Debug.LogError("当前Shader不支持");
                 return null;
             }
 
@@ -40,4 +39,6 @@ public class Postprocessing : MonoBehaviour
         Graphics.Blit(source, destination, Mat);
     }
 }
+}
+
 
