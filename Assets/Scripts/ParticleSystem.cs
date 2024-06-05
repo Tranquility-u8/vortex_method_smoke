@@ -93,9 +93,9 @@ namespace VortexMethod
             tracer_particles = new List<Particle>();
             for (int i = 0; i < NUM_TRACER; i++)
             {
-                float x = Random.Range(-0.5f, 0.5f);
-                float y = Random.Range(-1.5f, 1.5f);
-                float z = Random.Range(-0.5f, 0.5f);
+                float x = Random.Range(-1.5f, 1.5f);
+                float y = Random.Range(-0.5f, 0.5f);
+                float z = Random.Range(-1.5f, 1.5f);
                 tracer_particles.Add(new TracerParticle(new Vector3(x, y, z), prefab));
             }
         }
