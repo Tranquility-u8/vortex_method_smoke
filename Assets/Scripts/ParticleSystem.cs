@@ -13,13 +13,14 @@ namespace VortexMethod
         /// 
         /// TODO LISTS：
         /// 1）GPU加速
-        /// 2）边界值处理
-        /// 3）与场景交互
-        /// 4）Treecode性能优化
+        /// 2) 渲染实现
+        /// 3）边界值处理
+        /// 4）与场景交互
+        /// 5）Treecode性能优化
         /// 
         /// PS：
-        /// 1到3感觉应该不难
-        /// 4的话看情况实现？
+        /// 1到4感觉应该不难
+        /// 5的话看情况实现？
         /// 
         /// </summary>
         /// 
@@ -35,7 +36,7 @@ namespace VortexMethod
         [SerializeField] private GameObject prefab;
 
         [System.Serializable]
-        public class ParticleConfig 
+        private class ParticleConfig 
         {
             public Vector3 pos;
             public Vector3 vor;
@@ -130,7 +131,7 @@ namespace VortexMethod
         {
             for (int i = 0; i < NUM_TRACER; i++)
             {
-                rk3_integrate_pos(tracer_particles[i], Dt);
+                one_order_eular__integrate(tracer_particles[i], Dt);
                 tracer_particles[i].UpdatePos();
             }
         }
@@ -171,7 +172,7 @@ namespace VortexMethod
             return v;
         }
 
-        void rk3_integrate_pos(Particle p, float dt)
+        void one_order_eular__integrate(Particle p, float dt)
         {
             Vector3 pos0 = p.data.pos;
 
