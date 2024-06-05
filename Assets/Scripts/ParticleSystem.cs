@@ -96,7 +96,7 @@ namespace VortexMethod
                 float x = Random.Range(-1.5f, 1.5f);
                 float y = Random.Range(-0.5f, 0.5f);
                 float z = Random.Range(-1.5f, 1.5f);
-                tracer_particles.Add(new TracerParticle(new Vector3(x, y, z), prefab));
+                tracer_particles.Add(new TracerParticle(new Vector3(x, y, z), prefab, transform));
             }
         }
         #endregion

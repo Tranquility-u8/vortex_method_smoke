@@ -24,6 +24,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
   m_ValidKeywords:
   - _ALPHAMODULATE_ON
+  - _ALPHATEST_ON
   - _FADING_ON
   - _SOFTPARTICLES_ON
   - _SURFACE_TYPE_TRANSPARENT
@@ -37,8 +38,8 @@ Material:
     RenderType: Transparent
   disabledShaderPasses:
   - ALWAYS
-  - SHADOWCASTER
   - DepthOnly
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -67,7 +68,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 62cdb1766be85434f891010504c72e0e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0f5915dc7b88ec243b8d784d586e277a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -82,9 +83,21 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClip: 0
+    - _AlphaClip: 1
     - _AlphaToMask: 0
     - _Blend: 3
     - _BlendOp: 0
@@ -113,7 +126,11 @@ Material:
     - _Mode: 2
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
     - _QueueOffset: 0
+    - _ReceiveShadows: 1
+    - _SampleGI: 0
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 1
     - _SoftParticlesFarFadeDistance: 0.2
@@ -125,11 +142,11 @@ Material:
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0.4627451}
+    - _BaseColor: {r: 0.2767295, g: 0.26255074, b: 0.25671446, a: 0.49019608}
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0.28301886, g: 0.28301886, b: 0.28301886, a: 0.4627451}
+    - _Color: {r: 0.27672946, g: 0.2625507, b: 0.25671443, a: 0.49019608}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0.0754717, g: 0.07526332, b: 0.07523437, a: 1}
+    - _EmissionColor: {r: 0.1509434, g: 0.15046874, b: 0.15046874, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []
