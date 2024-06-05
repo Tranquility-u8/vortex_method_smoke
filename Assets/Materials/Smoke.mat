@@ -20,17 +20,16 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fire
+  m_Name: Smoke
   m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
   m_ValidKeywords:
   - _ALPHAMODULATE_ON
-  - _EMISSION
   - _FADING_ON
   - _SOFTPARTICLES_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
   - _FLIPBOOKBLENDING_OFF
-  m_LightmapFlags: 0
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
@@ -44,7 +43,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: ce76f6da9e1e27f4681cdc4d1f9c0adb, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0f5915dc7b88ec243b8d784d586e277a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -126,11 +125,11 @@ Material:
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _BaseColor: {r: 0.4339623, g: 0.3698232, b: 0.3698232, a: 0.5882353}
+    - _BaseColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0.4627451}
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0.43396226, g: 0.36982316, b: 0.36982316, a: 0.5882353}
+    - _Color: {r: 0.28301886, g: 0.28301886, b: 0.28301886, a: 0.4627451}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 0.0754717, g: 0.07526332, b: 0.07523437, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 5, b: 0, a: 0}
   m_BuildTextureStacks: []
