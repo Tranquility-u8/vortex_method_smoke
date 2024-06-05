@@ -10,9 +10,6 @@ namespace VortexMethod
         [SerializeField] private float mouseSensitivity = 80.0f;
         [SerializeField] private float speed = 0.3f;
 
-        private float xRotation = 0f;
-        private float yRotation = 0f;
-
         private void Awake()
         {
             Cursor.lockState = CursorLockMode.Locked;
@@ -42,17 +39,19 @@ namespace VortexMethod
 
         void RotateView()
         {
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+            float _mouse_x = Input.GetAxis("Mouse X");
+            float _mouse_y = Input.GetAxis("Mouse Y");
 
-            xRotation -= mouseY;
-            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            Quaternion xQuaternion = Quaternion.AngleAxis(-_mouse_y * mouseSensitivity, Vector3.right);
+            Quaternion yQuaternion = Quaternion.AngleAxis(_mouse_x * mouseSensitivity, Vector3.up);
 
-            yRotation += mouseX;
-            yRotation = Mathf.Clamp(yRotation, -90f, 90f);
+            Quaternion targetRotation = xQuaternion * transform.localRotation * yQuaternion;
 
+            Vector3 euler = targetRotation.eulerAngles;
+            euler.z = 0;
+            targetRotation.eulerAngles = euler;
 
-            transform.localRotation = Quaternion.Euler(xRotation, yRotation, 0f);
+            transform.localRotation = targetRotation;
         }
     }
 }

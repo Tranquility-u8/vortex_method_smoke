@@ -60,7 +60,7 @@ namespace VortexMethod
         {
             data.pos = pos;
             sprite = Object.Instantiate(prefab, pos, Quaternion.identity, parent);
-            sprite.AddComponent<LookAtCamera>();
+            //sprite.AddComponent<LookAtCamera>(); //MyParticleMat已经实现了billboard，无需挂载该脚本；仅供测试用
         }
 
         public override void UpdatePos()
