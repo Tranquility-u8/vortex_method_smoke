@@ -8,18 +8,18 @@ Shader "Unlit/Smoke"
 	SubShader
 	{
 		Pass
-	    {
-		    CGPROGRAM
-		    #pragma target 5.0
+		{
+			CGPROGRAM
+			#pragma target 5.0
 
-		    #pragma vertex vert
-		    #pragma geometry geom
-		    #pragma fragment frag
+			#pragma vertex vert
+			#pragma geometry geom
+			#pragma fragment frag
 
-		    #include "UnityCG.cginc"
-            #include "Particle.cginc"
+			#include "UnityCG.cginc"
+			#include "Particle.cginc"
 		
-            StructuredBuffer<VortexParticle> uParticles;
+			StructuredBuffer<VortexParticle> uParticles;
 			uint uMaxParticleCount, uFlip;
 			#define CTX_IDX(F, X) F##_IDX(uMaxParticleCount, uFlip, X)
 			
@@ -28,24 +28,24 @@ Shader "Unlit/Smoke"
 			Texture2D _SpriteTex;
 			SamplerState sampler_SpriteTex;
 
-		    struct V2G
-		    {
-		    	float4 pos : SV_POSITION;
-		    };
-		    struct G2F
-		    {
-		    	float4 pos : SV_POSITION;
+			struct V2G
+			{
+				float4 pos : SV_POSITION;
+			};
+			struct G2F
+			{
+				float4 pos : SV_POSITION;
 				float2 texcoord : TEXCOORD0;
-		    };
+			};
 
-		    V2G vert(uint id : SV_VertexID)
-		    {
-		    	V2G o;
-			    float3 pos = uParticles[CTX_IDX(DST, id)].pos;
-                o.pos = mul(UNITY_MATRIX_VP, float4(pos, 1.0));
+			V2G vert(uint id : SV_VertexID)
+			{
+				V2G o;
+				float3 pos = uParticles[CTX_IDX(DST, id)].pos;
+				o.pos = mul(UNITY_MATRIX_VP, float4(pos, 1.0));
 				
-			    return o;
-		    }
+				return o;
+			}
 			
 			
 			[maxvertexcount(4)]
@@ -73,10 +73,10 @@ Shader "Unlit/Smoke"
 				tri.Append(o);
 			}
 
-		    float4 frag(G2F i) : COLOR
-		    {
-			    return _SpriteTex.Sample(sampler_SpriteTex, i.texcoord);
-		    }
+			float4 frag(G2F i) : COLOR
+			{
+				return _SpriteTex.Sample(sampler_SpriteTex, i.texcoord);
+			}
 
 			ENDCG
 
