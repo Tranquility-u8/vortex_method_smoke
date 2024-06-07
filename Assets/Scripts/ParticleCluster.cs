@@ -10,7 +10,7 @@ public class ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, n
     private readonly int _emitKernel, _simulateDispatchKernel, _simulateKernel;
     private readonly uint _emitKernelGroupX;
     private ComputeBuffer _particleBuffer, _emitBuffer, _countBuffer, _simulateCommandBuffer;
-    private readonly Queue<T> _emits;
+    private readonly List<T> _emits;
     private readonly int _maxParticleCount, _maxEmitCount, _particleWordCount;
 
     public ComputeShader Shader { get => _shader; }
@@ -24,7 +24,7 @@ public class ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, n
     public int MaxEmitCount { get => _maxEmitCount; }
     public int ParticleWordCount { get => _particleWordCount; }
 
-    public Queue<T> Emits { get => _emits; }
+    public List<T> Emits { get => _emits; }
 
     public ParticleCluster(ComputeShader shader, int max_particle_count, int max_emit_count)
     {
@@ -32,7 +32,7 @@ public class ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, n
         _maxParticleCount = max_particle_count;
         _maxEmitCount = max_emit_count;
         _particleWordCount = (new T()).WordCount;
-        _emits = new Queue<T>();
+        _emits = new List<T>();
 
         _emitKernel = _shader.FindKernel("Emit");
         _shader.GetKernelThreadGroupSizes(_emitKernel, out _emitKernelGroupX, out _, out _);
@@ -51,13 +51,16 @@ public class ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, n
     public void Emit(bool src_flip)
     {
         int emit_count = Math.Min(Emits.Count, _maxEmitCount);
-        if (emit_count == 0)
+        if (emit_count == 0) {
+            Emits.Clear();
             return;
+        }
 
         // Flatten Data
         W[] emit_data = new W[emit_count * _particleWordCount];
         for (int i = 0, o = 0; i < emit_count; ++i, o += _particleWordCount)
-            Emits.Dequeue().ToWords(emit_data.AsSpan().Slice(o, _particleWordCount));
+            Emits[i].ToWords(emit_data.AsSpan().Slice(o, _particleWordCount));
+        Emits.Clear();
 
         // Dispatch
         _shader.SetInt("uFlip", src_flip ? 1 : 0);

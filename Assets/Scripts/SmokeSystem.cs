@@ -11,8 +11,8 @@ public class SmokeSystem : MonoBehaviour
     public Bounds ParticleBounds;
     public Material ParticleMaterial;
 
-    public Queue<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
-    public Queue<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
+    public List<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
+    public List<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
 
 
     private VortexParticleCluster _vortexCluster;
@@ -38,7 +38,7 @@ public class SmokeSystem : MonoBehaviour
         float x = UnityEngine.Random.Range(-0.2f, 0.2f);
         float y = UnityEngine.Random.Range(-0.2f, 0.2f);
         float z = UnityEngine.Random.Range(-0.2f, 0.2f);
-        _tracerCluster.Emits.Enqueue(new TracerParticle(new Vector3(x, y, z), 1.0f));
+        _tracerCluster.Emits.Add(new TracerParticle(new Vector3(x, y, z), 1.0f));
 
         _vortexCluster.Emit(_flip);
         _tracerCluster.Emit(_flip);
