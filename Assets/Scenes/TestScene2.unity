@@ -637,19 +637,19 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2005683821}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fd62ec50f93fcd34db5a2be9d891a643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Dt: 0.1
   EPS: 0.02
-  NUM_TRACER: 500
+  NUM_TRACER: 100000
   vortex_particle_configs:
   - pos: {x: 0, y: 1, z: 0}
-    vor: {x: 0, y: 0, z: 0.1}
+    vor: {x: 0, y: 0, z: 2}
   - pos: {x: 0, y: -1, z: 0}
-    vor: {x: 0, y: 0, z: 0.1}
+    vor: {x: 0, y: 0, z: 1}
   prefab: {fileID: 5211116387577698578, guid: 199db34a1a4434749b0f398ffa5ec53b, type: 3}
 --- !u!114 &2005683826
 MonoBehaviour:
@@ -664,11 +664,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
-  TracerComputeShader: {fileID: 0}
+  TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 1024
   MaxVortexEmitCount: 256
-  MaxTracerParticleCount: 65536
-  MaxTracerEmitCount: 4096
+  MaxTracerParticleCount: 131072
+  MaxTracerEmitCount: 16384
   ParticleBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 100, y: 100, z: 100}

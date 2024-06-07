@@ -18,11 +18,10 @@ Shader "Unlit/Smoke"
 
 			#include "UnityCG.cginc"
 			#include "Particle.cginc"
+			#include "ParticleCluster.cginc"
 		
-			StructuredBuffer<VortexParticle> uParticles;
+			StructuredBuffer<TracerParticle> uParticles;
 			uint uMaxParticleCount, uFlip;
-			#define CTX_IDX(F, X) F##_IDX(uMaxParticleCount, uFlip, X)
-			
 			
 			float _Radius;
 			Texture2D _SpriteTex;
@@ -41,8 +40,7 @@ Shader "Unlit/Smoke"
 			V2G vert(uint id : SV_VertexID)
 			{
 				V2G o;
-				float3 pos = uParticles[CTX_IDX(DST, id)].pos;
-				o.pos = mul(UNITY_MATRIX_VP, float4(pos, 1.0));
+				o.pos = mul(UNITY_MATRIX_VP, float4(PC_GET(SRC_UNSAFE, id).pos, 1.0));
 				
 				return o;
 			}
