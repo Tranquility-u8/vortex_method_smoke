@@ -1,0 +1,74 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Emit
+#pragma kernel SimulateDispatch
+#pragma kernel Simulate
+#pragma kernel DrawDispatch
+
+#include "Particle.cginc"
+
+#define GROUP_X 64
+
+StructuredBuffer<VortexParticle> uEmits;
+uint uEmitCount;
+
+RWStructuredBuffer<VortexParticle> uParticles;
+RWStructuredBuffer<uint> uParticleCount;
+uint uMaxParticleCount;
+
+RWStructuredBuffer<uint> uSimulateCommand;
+RWStructuredBuffer<uint> uDrawCommand;
+
+float uDeltaTime;
+
+uint uFlip;
+
+#define CTX_IDX(F, X) F##_IDX(uMaxParticleCount, uFlip, X)
+#define CTX_COUNT(F) F##_COUNT(uMaxParticleCount, uFlip, uParticleCount)
+
+[numthreads(GROUP_X, 1, 1)]
+void Emit(uint3 id : SV_DispatchThreadID) {
+    uint emit_idx = id.x;
+    if (emit_idx >= uEmitCount)
+        return;
+    
+    uint idx;
+    InterlockedAdd(CTX_COUNT(RAW_SRC), 1u, idx);
+    if (idx >= uMaxParticleCount)
+        return;
+    
+    uParticles[CTX_IDX(SRC, idx)] = uEmits[emit_idx];
+}
+
+[numthreads(1, 1, 1)]
+void SimulateDispatch() {
+    uSimulateCommand[0] = (CTX_COUNT(SRC) + GROUP_X - 1) / GROUP_X;
+    uSimulateCommand[1] = 1;
+    uSimulateCommand[2] = 1;
+    CTX_COUNT(RAW_DST) = 0; 
+}
+
+[numthreads(GROUP_X, 1, 1)]
+void Simulate(uint3 id : SV_DispatchThreadID) {
+    uint src_idx = id.x;
+    if (src_idx >= CTX_COUNT(SRC))
+        return;
+
+    VortexParticle p = uParticles[CTX_IDX(SRC, src_idx)];
+    if ((p.life -= uDeltaTime) < 0)
+        return;
+    
+    p.pos.y += uDeltaTime * 2.0;
+    
+    uint dst_idx;
+    InterlockedAdd(CTX_COUNT(RAW_DST), 1u, dst_idx);
+    uParticles[CTX_IDX(DST, dst_idx)] = p;
+}
+
+[numthreads(1, 1, 1)]
+void DrawDispatch() {
+    uDrawCommand[0] = CTX_COUNT(DST);
+    uDrawCommand[1] = 1;
+    uDrawCommand[2] = 0;
+    uDrawCommand[3] = 0;
+    uDrawCommand[4] = 0;
+}

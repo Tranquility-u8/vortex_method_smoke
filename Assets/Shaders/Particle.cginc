@@ -1,0 +1,13 @@
+struct VortexParticle {
+    float3 pos, vor; 
+    float life;
+};
+
+#define SRC_IDX(MAX_COUNT, FLIP, IDX) ((FLIP) == 0 ? (IDX) : (IDX) + (MAX_COUNT))
+#define DST_IDX(MAX_COUNT, FLIP, IDX) ((FLIP) == 1 ? (IDX) : (IDX) + (MAX_COUNT))
+
+#define RAW_SRC_COUNT(MAX_COUNT, FLIP, COUNTS) (COUNTS[FLIP])
+#define SRC_COUNT(MAX_COUNT, FLIP, COUNTS) (min(RAW_SRC_COUNT(MAX_COUNT, FLIP, COUNTS), MAX_COUNT))
+
+#define RAW_DST_COUNT(MAX_COUNT, FLIP, COUNTS) (COUNTS[(FLIP) ^ 1u])
+#define DST_COUNT(MAX_COUNT, FLIP, COUNTS) (min(RAW_DST_COUNT(MAX_COUNT, FLIP, COUNTS), MAX_COUNT))
