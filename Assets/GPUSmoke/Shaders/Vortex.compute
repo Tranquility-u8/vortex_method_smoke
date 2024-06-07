@@ -1,0 +1,86 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Emit
+#pragma kernel SimulateDispatch
+#pragma kernel Simulate
+
+#define GROUP_X 128
+
+#include "Particle.cginc"
+#include "ParticleCluster.cginc"
+#include "VortexMethod.cginc"
+
+StructuredBuffer<VortexParticle> uEmits;
+uint uEmitCount;
+
+RWStructuredBuffer<VortexParticle> uParticles_RW;
+StructuredBuffer<VortexParticle> uParticles;
+RWStructuredBuffer<uint> uParticleCount_RW;
+StructuredBuffer<uint> uParticleCount;
+uint uMaxParticleCount;
+
+RWStructuredBuffer<uint> uSimulateCommand_RW;
+
+float uDeltaTime;
+
+uint uFlip;
+
+[numthreads(GROUP_X, 1, 1)]
+void Emit(uint3 id : SV_DispatchThreadID) {
+    uint emit_idx = id.x;
+    if (emit_idx >= uEmitCount)
+        return;
+    PC_PUSH(SRC_SAFE, uEmits[emit_idx]);
+}
+
+[numthreads(1, 1, 1)]
+void SimulateDispatch() {
+    uSimulateCommand_RW[0] = (PC_COUNT(SRC) + GROUP_X - 1) / GROUP_X;
+    uSimulateCommand_RW[1] = 1;
+    uSimulateCommand_RW[2] = 1;
+    PC_COUNT(REF_DST) = 0; 
+}
+
+groupshared float2x3 sPosVor[GROUP_X];
+void velocity_from_group_pos_vor(inout float3 v, in const float3 pi_pos) {
+    #define R1(X) v += velocity_from_pos_vor(pi_pos, sPosVor[X]);
+    #define R2(X) R1(X); R1(X + 1);
+    #define R4(X) R2(X); R2(X + 2);
+    #define R8(X) R4(X); R4(X + 4);
+    #define R16(X) R8(X); R8(X + 8);
+    #define R32(X) R16(X); R16(X + 16);
+    #define R64(X) R32(X); R32(X + 32);
+    #define R128(X) R64(X); R64(X + 64);
+    #define RUN(SIZE) R##SIZE(0)
+    RUN(GROUP_X);
+}
+void velocity_from_group_sub_pos_vor(inout float3 v, in const float3 pi_pos, in const uint n) {
+    for (uint i = 0; i < n; ++i)
+        v += velocity_from_pos_vor(pi_pos, sPosVor[i]);
+}
+
+[numthreads(GROUP_X, 1, 1)]
+void Simulate(uint3 id : SV_DispatchThreadID, uint3 group_id : SV_GroupThreadID) {
+    uint src_idx = id.x, src_count = PC_COUNT(SRC);
+    VortexParticle p = PC_GET(SRC_SAFE, src_idx);
+    
+    float3 v = float3(0, 0, 0);
+    uint s = PC_IDX(SRC, 0), t = s + src_count, group_idx = group_id.x;
+    [loop] for (; s + GROUP_X <= t; s += GROUP_X) {
+        GroupMemoryBarrierWithGroupSync();
+        sPosVor[group_idx] = pos_vor_from_vortex_particle(uParticles[s + group_idx]);
+        GroupMemoryBarrierWithGroupSync();
+        velocity_from_group_pos_vor(v, p.pos);
+    }
+    if (s < t) {
+        GroupMemoryBarrierWithGroupSync();
+        sPosVor[group_idx] = s + group_idx < t ? pos_vor_from_vortex_particle(uParticles[s + group_idx]) : float2x3(0, 0, 0, 0, 0, 0);
+        GroupMemoryBarrierWithGroupSync();
+        velocity_from_group_sub_pos_vor(v, p.pos, t - s);
+    } 
+
+    p.pos += v * uDeltaTime;
+    p.life -= uDeltaTime;
+
+    if (src_idx < src_count && p.life >= 0)
+        PC_PUSH(DST_UNSAFE, p);
+}
