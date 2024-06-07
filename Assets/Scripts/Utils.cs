@@ -56,15 +56,15 @@ namespace VortexMethod
     {
         private GameObject sprite;
 
-        public TracerParticle(Vector3 _pos, GameObject prefab)
+        public TracerParticle(Vector3 pos, GameObject prefab, Transform parent)
         {
-            data.pos = _pos;
-            sprite = Object.Instantiate(prefab, _pos, Quaternion.identity);
+            data.pos = pos;
+            sprite = Object.Instantiate(prefab, pos, Quaternion.identity, parent);
         }
 
         public override void UpdatePos()
         {
-            sprite.transform.position = data.pos;
+            sprite.transform.localPosition = data.pos;
         }
 
     }

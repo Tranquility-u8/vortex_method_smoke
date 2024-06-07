@@ -6,39 +6,39 @@ using UnityEngine;
 namespace VortexMethod
 {
     [ExecuteInEditMode]
-public class Postprocessing : MonoBehaviour
-{
-    public Shader PostProcessingShader;
-    private Material _material;
-    public Material Mat
+    public class Postprocessing : MonoBehaviour
     {
-        get
+        public Shader PostProcessingShader;
+        private Material _material;
+        public Material Mat
         {
-            if (PostProcessingShader == null)
+            get
             {
-                return null;
-            }
-            if (!PostProcessingShader.isSupported)
-            {
-                return null;
-            }
+                if (PostProcessingShader == null)
+                {
+                    return null;
+                }
+                if (!PostProcessingShader.isSupported)
+                {
+                    return null;
+                }
 
-            if (_material == null)
-            {
-                Material _newMaterial = new Material(PostProcessingShader);
-                _newMaterial.hideFlags = HideFlags.HideAndDontSave;
-                _material = _newMaterial;
-                return _newMaterial;
+                if (_material == null)
+                {
+                    Material _newMaterial = new Material(PostProcessingShader);
+                    _newMaterial.hideFlags = HideFlags.HideAndDontSave;
+                    _material = _newMaterial;
+                    return _newMaterial;
+                }
+                return _material;
             }
-            return _material;
+        }
+
+        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        {
+            Graphics.Blit(source, destination, Mat);
         }
     }
-
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(source, destination, Mat);
-    }
-}
 }
 
 
