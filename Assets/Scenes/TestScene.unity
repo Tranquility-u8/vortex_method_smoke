@@ -624,7 +624,7 @@ MonoBehaviour:
     vor: {x: -0.2, y: 0, z: 0}
   - pos: {x: 0, y: 0.5, z: 1}
     vor: {x: 0.2, y: 0, z: 0}
-  HEAT_RADIUS: 5
+  HEAT_RADIUS: 8
   HEAT_X_SCALE: 1
   HEAT_Y_SCALE: 1
   HEAT_Z_SCALE: 1
