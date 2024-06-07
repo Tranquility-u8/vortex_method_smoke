@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace VortexMethod 
+namespace GPUSmoke
 {
     public class TestSmokeSystem : MonoBehaviour
     {
@@ -46,7 +46,7 @@ namespace VortexMethod
         {
             var smoke_system = GetComponent<SmokeSystem>();
             for (int i = 0; i < NUM_VORTEX; i++)
-                smoke_system.VortexEmits.Add(new global::VortexParticle(vortex_particle_configs[i].pos, vortex_particle_configs[i].vor, float.PositiveInfinity));
+                smoke_system.VortexEmits.Add(new VortexParticle(vortex_particle_configs[i].pos, vortex_particle_configs[i].vor, float.PositiveInfinity));
         }
 
         void InitTracer()
@@ -57,7 +57,7 @@ namespace VortexMethod
                 float x = Random.Range(-0.5f, 0.5f);
                 float y = Random.Range(-1.5f, 1.5f);
                 float z = Random.Range(-0.5f, 0.5f);
-                smoke_system.TracerEmits.Add(new global::TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
+                smoke_system.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
             }
         }
         #endregion
