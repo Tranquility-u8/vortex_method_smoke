@@ -23,31 +23,31 @@
 #define _PC_DST_SAFE_GET(PREFIX, IDX) (__PC_PARTICLES(PREFIX)[_PC_DST_IDX(PREFIX, min(IDX, __PC_MAX_COUNT(PREFIX) - 1u))])
 
 #define _PC_SRC_SAFE_PUSH(PREFIX, P) [unroll] do { \
-    uint idx; \
-    InterlockedAdd(_PC_REF_SRC_COUNT(PREFIX), 1u, idx); \
-    if (idx >= __PC_MAX_COUNT(PREFIX)) \
+    uint __pc_idx; \
+    InterlockedAdd(_PC_REF_SRC_COUNT(PREFIX), 1u, __pc_idx); \
+    if (__pc_idx >= __PC_MAX_COUNT(PREFIX)) \
         break; \
-    __PC_PARTICLES_RW(PREFIX)[_PC_SRC_IDX(PREFIX, idx)] = (P); \
+    __PC_PARTICLES_RW(PREFIX)[_PC_SRC_IDX(PREFIX, __pc_idx)] = (P); \
 } while (false)
 
 #define _PC_SRC_UNSAFE_PUSH(PREFIX, P) [unroll] do { \
-    uint idx; \
-    InterlockedAdd(_PC_REF_SRC_COUNT(PREFIX), 1u, idx); \
-    __PC_PARTICLES_RW(PREFIX)[_PC_SRC_IDX(PREFIX, idx)] = (P); \
+    uint __pc_idx; \
+    InterlockedAdd(_PC_REF_SRC_COUNT(PREFIX), 1u, __pc_idx); \
+    __PC_PARTICLES_RW(PREFIX)[_PC_SRC_IDX(PREFIX, __pc_idx)] = (P); \
 } while (false)
 
 #define _PC_DST_SAFE_PUSH(PREFIX, P) [unroll] do { \
-    uint idx; \
-    InterlockedAdd(_PC_REF_DST_COUNT(PREFIX), 1u, idx); \
-    if (idx >= __PC_MAX_COUNT(PREFIX)) \
+    uint __pc_idx; \
+    InterlockedAdd(_PC_REF_DST_COUNT(PREFIX), 1u, __pc_idx); \
+    if (__pc_idx >= __PC_MAX_COUNT(PREFIX)) \
         break; \
-    __PC_PARTICLES_RW(PREFIX)[_PC_DST_IDX(PREFIX, idx)] = (P); \
+    __PC_PARTICLES_RW(PREFIX)[_PC_DST_IDX(PREFIX, __pc_idx)] = (P); \
 } while (false)
 
 #define _PC_DST_UNSAFE_PUSH(PREFIX, P) [unroll] do { \
-    uint idx; \
-    InterlockedAdd(_PC_REF_DST_COUNT(PREFIX), 1u, idx); \
-    __PC_PARTICLES_RW(PREFIX)[_PC_DST_IDX(PREFIX, idx)] = (P); \
+    uint __pc_idx; \
+    InterlockedAdd(_PC_REF_DST_COUNT(PREFIX), 1u, __pc_idx); \
+    __PC_PARTICLES_RW(PREFIX)[_PC_DST_IDX(PREFIX, __pc_idx)] = (P); \
 } while (false)
 
 #define _PC_IDX(PREFIX, F, X) _PC_##F##_IDX(PREFIX, X)
