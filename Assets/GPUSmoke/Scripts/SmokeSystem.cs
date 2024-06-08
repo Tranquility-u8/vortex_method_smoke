@@ -10,8 +10,9 @@ namespace GPUSmoke
         public ComputeShader VortexComputeShader, TracerComputeShader;
         public int MaxVortexParticleCount, MaxVortexEmitCount;
         public int MaxTracerParticleCount, MaxTracerEmitCount;
-        public Bounds ParticleBounds;
         public Material ParticleMaterial;
+        public Bounds Bounds;
+        public int HeatFieldMaxGridSize;
 
         public List<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
         public List<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
@@ -47,7 +48,7 @@ namespace GPUSmoke
 
             _vortexCluster.Simulate(_flip, Time.deltaTime);
             _tracerCluster.Simulate(_flip, !_flip, Time.deltaTime);
-            _tracerCluster.Draw(!_flip, ParticleBounds);
+            _tracerCluster.Draw(!_flip, Bounds);
 
             _flip = !_flip;
         }
@@ -59,7 +60,7 @@ namespace GPUSmoke
             
             Gizmos.color = Color.cyan;
             Gizmos.matrix = Matrix4x4.identity;
-            Gizmos.DrawWireCube(ParticleBounds.center, ParticleBounds.size);
+            Gizmos.DrawWireCube(Bounds.center, Bounds.size);
 
             Gizmos.color = prev_color;
             Gizmos.matrix = prev_matrix;

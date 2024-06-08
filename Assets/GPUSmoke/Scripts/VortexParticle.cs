@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
 
-
 namespace GPUSmoke
 {
-    public struct VortexParticle : IParticle<float>
+    public struct VortexParticle : IStruct<float>
     {
         public Vector3 pos, vor;
         public float life;

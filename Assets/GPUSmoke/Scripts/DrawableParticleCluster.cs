@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public class DrawableParticleCluster<W, T> : ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, new()
+    public class DrawableParticleCluster<W, T> : ParticleCluster<W, T> where W : unmanaged where T : IStruct<W>, new()
     {
         private ComputeBuffer _drawCommandBuffer;
         private readonly int _drawDispatchKernel;

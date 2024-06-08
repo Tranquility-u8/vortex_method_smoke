@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public class ParticleCluster<W, T> where W : unmanaged where T : IParticle<W>, new()
+    public class ParticleCluster<W, T> where W : unmanaged where T : IStruct<W>, new()
     {
         private readonly ComputeShader _shader;
         private readonly int _emitKernel, _simulateDispatchKernel, _simulateKernel;
         private readonly uint _emitKernelGroupX;
         private ComputeBuffer _particleBuffer, _emitBuffer, _countBuffer, _simulateCommandBuffer;
         private readonly List<T> _emits;
-        private readonly int _maxParticleCount, _maxEmitCount, _particleWordCount;
+        private readonly int _maxParticleCount, _maxEmitCount;
 
         public ComputeShader Shader { get => _shader; }
         public int EmitKernel { get => _emitKernel; }
@@ -24,7 +24,6 @@ namespace GPUSmoke
         public ComputeBuffer SimulateDispatchBuffer { get => _simulateCommandBuffer; }
         public int MaxParticleCount { get => _maxParticleCount; }
         public int MaxEmitCount { get => _maxEmitCount; }
-        public int ParticleWordCount { get => _particleWordCount; }
 
         public List<T> Emits { get => _emits; }
 
@@ -33,7 +32,6 @@ namespace GPUSmoke
             _shader = shader;
             _maxParticleCount = max_particle_count;
             _maxEmitCount = max_emit_count;
-            _particleWordCount = (new T()).WordCount;
             _emits = new List<T>();
 
             _emitKernel = _shader.FindKernel("Emit");
@@ -60,10 +58,9 @@ namespace GPUSmoke
             }
 
             // Flatten Data
-            W[] emit_data = new W[emit_count * _particleWordCount];
-            for (int i = 0, o = 0; i < emit_count; ++i, o += _particleWordCount)
-                Emits[i].ToWords(emit_data.AsSpan().Slice(o, _particleWordCount));
-            Emits.Clear();
+            int b = Emits.Count - emit_count;
+            W[] emit_data = StructUtil<W, T>.ToWords(Emits.GetRange(b, emit_count));
+            Emits.RemoveRange(b, emit_count);
 
             // Dispatch
             _shader.SetInt("uFlip", src_flip ? 1 : 0);
@@ -82,8 +79,8 @@ namespace GPUSmoke
 
         private void CreateBuffer_()
         {
-            _particleBuffer = new ComputeBuffer(_maxParticleCount * 2, _particleWordCount * UnsafeUtility.SizeOf<W>(), ComputeBufferType.Structured);
-            _emitBuffer = new ComputeBuffer(_maxEmitCount, _particleWordCount * UnsafeUtility.SizeOf<W>(), ComputeBufferType.Structured);
+            _particleBuffer = new ComputeBuffer(_maxParticleCount * 2, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
+            _emitBuffer = new ComputeBuffer(_maxEmitCount, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
             _countBuffer = new ComputeBuffer(2, sizeof(uint), ComputeBufferType.Structured);
             _simulateCommandBuffer = new ComputeBuffer(3, sizeof(uint), ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
 

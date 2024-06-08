@@ -609,7 +609,7 @@ GameObject:
   - component: {fileID: 2005683825}
   - component: {fileID: 2005683826}
   m_Layer: 0
-  m_Name: ParticleEmitter
+  m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -642,7 +642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd62ec50f93fcd34db5a2be9d891a643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NUM_TRACER: 100000
+  NUM_TRACER: 10000
   vortex_particle_configs:
   - pos: {x: 0, y: 1, z: 0}
     vor: {x: 0, y: 0, z: 2}
@@ -666,10 +666,11 @@ MonoBehaviour:
   MaxVortexEmitCount: 256
   MaxTracerParticleCount: 16384
   MaxTracerEmitCount: 4096
-  ParticleBounds:
-    m_Center: {x: 0, y: 8, z: 0}
-    m_Extent: {x: 16, y: 16, z: 16}
   ParticleMaterial: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
+  Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 16, y: 16, z: 16}
+  HeatFieldMaxGridSize: 32
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
