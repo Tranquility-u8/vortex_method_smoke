@@ -1,0 +1,23 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Edit
+
+struct EditEntry {
+    float3 center;
+    float temp;
+};
+
+StructuredBuffer<EditEntry> uEdits;
+
+RWTexture3D<float> uTexture_RW;
+float3 uBoundMin;
+uint3 uGridSize;
+float uCellSize;
+
+
+[numthreads(4, 4, 4)]
+void Edit(uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+
+    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}

@@ -5,40 +5,28 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public class HeatField
+    public class HeatField : Grid
     {
-        private readonly Bounds _bounds;
-        private readonly Vector3Int _gridSize;
-        private readonly float _cellSize;
         private readonly int _maxEditCount;
+        private readonly List<HeatFieldEdit> _edits;
 
         private readonly ComputeShader _shader;
         private readonly int _editKernel;
 
-        private Texture3D _texture;
-        
-        private ComputeBuffer _editBuffer;
-        
-        public HeatField(ComputeShader shader, Bounds bounds, int max_grid_size, int max_edit_count) {
-            // Properties
-            _bounds = bounds;
-            _cellSize = Math.Max(Math.Max(bounds.size.x, bounds.size.y), bounds.size.z) / max_grid_size;
-            var grid_size_f = bounds.size / _cellSize;
-            _gridSize = new Vector3Int(
-                Convert.ToInt32(Math.Ceiling(grid_size_f.x)), 
-                Convert.ToInt32(Math.Ceiling(grid_size_f.y)), 
-                Convert.ToInt32(Math.Ceiling(grid_size_f.z))
-            );
-            _maxEditCount = max_edit_count;
-            
+        private readonly ComputeBuffer _editBuffer;
+
+        public List<HeatFieldEdit> Edits { get => _edits; }
+
+        public HeatField(ComputeShader shader, Bounds bounds, int max_grid_size, int max_edit_count)
+            : base(bounds, max_grid_size, TextureFormat.RHalf)
+        {
             // Shader
             _shader = shader;
             _editKernel = shader.FindKernel("Edit");
-            
-            // Texture
-            _texture = new Texture3D(_gridSize.x, _gridSize.y, _gridSize.z, TextureFormat.RHalf, 1);
-            
-            // Buffer
+
+            // Edit Buffer
+            _maxEditCount = max_edit_count;
+            _edits = new();
             _editBuffer = new ComputeBuffer(max_edit_count, StructUtil<float, HeatFieldEdit>.ByteCount);
         }
     }
