@@ -9,6 +9,8 @@ namespace GPUSmoke
         private int NUM_VORTEX;
         [SerializeField] private int NUM_TRACER;
         [SerializeField] private List<ParticleConfig> vortex_particle_configs;
+        
+        private SmokeSystem _smokeSystem;
 
 
         [System.Serializable]
@@ -33,34 +35,24 @@ namespace GPUSmoke
             _firstUpdate = false;
         }
 
-        #region Init
         void Init()
         {
+            _smokeSystem = GetComponent<SmokeSystem>();
             NUM_VORTEX = vortex_particle_configs.Count;
 
-            InitVortex();
-            InitTracer();
-        }
-
-        void InitVortex()
-        {
-            var smoke_system = GetComponent<SmokeSystem>();
             for (int i = 0; i < NUM_VORTEX; i++)
-                smoke_system.VortexEmits.Add(new VortexParticle(vortex_particle_configs[i].pos, vortex_particle_configs[i].vor, float.PositiveInfinity));
-        }
+                _smokeSystem.VortexEmits.Add(new VortexParticle(vortex_particle_configs[i].pos, vortex_particle_configs[i].vor, float.PositiveInfinity));
 
-        void InitTracer()
-        {
-            var smoke_system = GetComponent<SmokeSystem>();
             for (int i = 0; i < NUM_TRACER; i++)
             {
                 float x = Random.Range(-0.5f, 0.5f);
                 float y = Random.Range(-1.5f, 1.5f);
                 float z = Random.Range(-0.5f, 0.5f);
-                smoke_system.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
+                _smokeSystem.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
             }
+            
+            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 100.0f, 1.0f));
         }
-        #endregion
     }
 }
 

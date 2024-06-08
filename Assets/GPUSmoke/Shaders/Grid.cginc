@@ -1,9 +1,10 @@
-#define __GRID_TEXTURE(PREFIX) u##PREFIX##Texture
-#define __GRID_TEXTURE_RW(PREFIX) u##PREFIX##Texture_RW
 #define __GRID_BOUND_MIN(PREFIX) float3(u##PREFIX##BoundMin)
 #define __GRID_SIZE(PREFIX) int3(u##PREFIX##GridSize)
 #define __GRID_USIZE(PREFIX) uint3(u##PREFIX##GridSize)
 #define __GRID_CELL_SIZE(PREFIX) float(u##PREFIX##CellSize)
+
+// Define Uniforms
+#define _GRID_DEF_UNIFORM(PREFIX) float u##PREFIX##CellSize; uint3 u##PREFIX##GridSize; float3 u##PREFIX##BoundMin;
 
 // Cell Converts
 #define __GRID_CELL_INT(PREFIX, CELL) int3(CELL)
@@ -35,6 +36,8 @@
     (CELL).z < __GRID_USIZE(PREFIX).z)
 
 // None Prefix
+#define GRID_DEF_UNIFORM _GRID_DEF_UNIFORM()
+
 #define GRID_CELL(CELL_F, CELL) _GRID_CELL(, CELL_F, CELL)
 #define GRID_CELL2WORLD(CELL_F, CELL) _GRID_CELL2WORLD(, CELL_F, CELL)
 #define GRID_WORLD2CELL(CELL_F, WORLD) _GRID_WORLD2CELL(, CELL_F, WORLD)

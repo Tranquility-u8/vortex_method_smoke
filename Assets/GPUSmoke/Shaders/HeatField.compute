@@ -9,13 +9,11 @@ struct EditEntry {
     float heat, stddev;
 };
 
+RWTexture3D<float> uTexture_RW;
+GRID_DEF_UNIFORM;
+
 StructuredBuffer<EditEntry> uEdits;
 uint uEditCount;
-
-RWTexture3D<float> uTexture_RW;
-float3 uBoundMin;
-uint3 uGridSize;
-float uCellSize;
 
 float gaussian(in const float x){
     #define ONE_OVER_SQRT_2PI 0.3989422804014327

@@ -2,21 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
-namespace GPUSmoke {
+namespace GPUSmoke
+{
 
-    public class Grid {
+    public class Grid
+    {
         private readonly Bounds _bounds;
         private readonly Vector3Int _gridSize;
         private readonly float _cellSize;
-        private readonly Texture3D _texture;
 
         public Bounds Bounds { get => _bounds; }
         public Vector3Int GridSize { get => _gridSize; }
         public float CellSize { get => _cellSize; }
-        public Texture3D Texture { get => _texture; }
 
-        public Grid(Bounds bounds, int max_grid_size, TextureFormat texture_format)
+        public Grid(Bounds bounds, int max_grid_size)
         {
             // Properties
             _bounds = bounds;
@@ -27,8 +28,15 @@ namespace GPUSmoke {
                 Convert.ToInt32(Math.Ceiling(grid_size_f.y)),
                 Convert.ToInt32(Math.Ceiling(grid_size_f.z))
             );
-            // Texture
-            _texture = new Texture3D(_gridSize.x, _gridSize.y, _gridSize.z, texture_format, 1);
+        }
+
+        public void SetShaderUniform(ComputeShader shader, string prefix = "")
+        {
+            shader.SetFloat("u" + prefix + "CellSize", _cellSize);
+            float[] bound_min = new float[3] {_bounds.min.x, _bounds.min.y, _bounds.min.z};
+            shader.SetFloats("u" + prefix + "BoundMin", bound_min);
+            int[] grid_size = new int[3] {_gridSize.x, _gridSize.y, _gridSize.z};
+            shader.SetInts("u" + prefix + "GridSize", grid_size);
         }
     }
 }

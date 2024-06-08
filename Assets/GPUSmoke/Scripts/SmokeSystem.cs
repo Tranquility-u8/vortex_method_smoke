@@ -7,25 +7,31 @@ namespace GPUSmoke
 {
     public class SmokeSystem : MonoBehaviour
     {
+        public Bounds Bounds;
+
         public ComputeShader VortexComputeShader, TracerComputeShader;
         public int MaxVortexParticleCount, MaxVortexEmitCount;
         public int MaxTracerParticleCount, MaxTracerEmitCount;
         public Material ParticleMaterial;
-        public Bounds Bounds;
-        public int HeatFieldMaxGridSize;
 
-        public List<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
-        public List<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
-
+        public ComputeShader HeatFieldShader;
+        public int HeatFieldMaxGridSize, HeatFieldMaxEditCount;
 
         private VortexParticleCluster _vortexCluster;
         private TracerParticleCluster _tracerCluster;
+        private HeatField _heatField;
         private bool _flip = true;
+
+        public List<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
+        public List<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
+        public List<HeatFieldEdit> HeatFieldEdits { get => _heatField.Edits; }
+
 
         void Awake()
         {
             _vortexCluster = new(VortexComputeShader, MaxVortexParticleCount, MaxVortexEmitCount);
             _tracerCluster = new(ParticleMaterial, TracerComputeShader, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
+            _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEditCount);
         }
 
         void OnDisable()
@@ -34,6 +40,8 @@ namespace GPUSmoke
             _vortexCluster = null;
             _tracerCluster.Destroy();
             _tracerCluster = null;
+            _heatField.Destroy();
+            _heatField = null;
         }
 
         void Update()
@@ -42,6 +50,8 @@ namespace GPUSmoke
             float y = UnityEngine.Random.Range(-0.2f, 0.2f);
             float z = UnityEngine.Random.Range(-0.2f, 0.2f);
             _tracerCluster.Emits.Add(new TracerParticle(new Vector3(x, y, z), 1.0f));
+            
+            _heatField.Edit();
 
             _vortexCluster.Emit(_flip);
             _tracerCluster.Emit(_flip);
