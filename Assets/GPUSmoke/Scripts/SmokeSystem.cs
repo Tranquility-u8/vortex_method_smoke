@@ -51,6 +51,20 @@ namespace GPUSmoke
 
             _flip = !_flip;
         }
+        
+        #if UNITY_EDITOR
+        void OnDrawGizmosSelected() {
+            Matrix4x4 prev_matrix = Gizmos.matrix;
+            Color prev_color = Gizmos.color;
+            
+            Gizmos.color = Color.cyan;
+            Gizmos.matrix = Matrix4x4.identity;
+            Gizmos.DrawWireCube(ParticleBounds.center, ParticleBounds.size);
+
+            Gizmos.color = prev_color;
+            Gizmos.matrix = prev_matrix;
+        }
+        #endif
     }
 
 }

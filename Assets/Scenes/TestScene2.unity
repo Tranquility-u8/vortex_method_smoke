@@ -665,10 +665,10 @@ MonoBehaviour:
   MaxVortexParticleCount: 1024
   MaxVortexEmitCount: 256
   MaxTracerParticleCount: 16384
-  MaxTracerEmitCount: 1024
+  MaxTracerEmitCount: 4096
   ParticleBounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 100, y: 100, z: 100}
+    m_Center: {x: 0, y: 8, z: 0}
+    m_Extent: {x: 16, y: 16, z: 16}
   ParticleMaterial: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
