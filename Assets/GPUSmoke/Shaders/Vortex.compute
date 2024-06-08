@@ -5,7 +5,6 @@
 
 #define GROUP_SIZE_X 128
 
-#include "Particle.cginc"
 #include "ParticleCluster.cginc"
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
@@ -41,7 +40,7 @@ void SimulateDispatch() {
     PC_COUNT(REF_DST) = 0; 
 }
 
-SR_DEF_SHARED_BUFFER(float2x3, PosVor, GROUP_SIZE_X);
+SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
@@ -52,7 +51,7 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     #define LOAD_POS_VOR(X) pos_vor_from_vortex_particle(uParticles[X])
     #define REDUCE_POS_VOR(P) v += velocity_from_pos_vor(p.pos, P)
     uint s = PC_IDX(SRC, 0), t = s + src_count;
-    SR_REDUCE(float2x3, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
+    SR_REDUCE(PosVor, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
 
     p.pos += v * uDeltaTime;
     p.life -= uDeltaTime;

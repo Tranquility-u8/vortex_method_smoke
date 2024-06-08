@@ -17,7 +17,7 @@ Shader "Unlit/Smoke"
 			#pragma fragment frag
 
 			#include "UnityCG.cginc"
-			#include "Particle.cginc"
+			#include "VortexMethod.cginc"
 			#include "ParticleCluster.cginc"
 		
 			StructuredBuffer<TracerParticle> uParticles;

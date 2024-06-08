@@ -1,21 +1,44 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Edit
 
+#include "SharedReduce.cginc"
+#include "Grid.cginc"
+
 struct EditEntry {
     float3 center;
-    float temp;
+    float heat, stddev;
 };
 
 StructuredBuffer<EditEntry> uEdits;
+uint uEditCount;
 
 RWTexture3D<float> uTexture_RW;
 float3 uBoundMin;
 uint3 uGridSize;
 float uCellSize;
 
+float gaussian(in const float x){
+    #define ONE_OVER_SQRT_2PI 0.3989422804014327
+    return ONE_OVER_SQRT_2PI * exp(-0.5 * x * x);
+}
+
+float heat_from_edit(in const float3 world, in const EditEntry edit) {
+    float inv_stddev = 1.0 / edit.stddev;
+    return edit.heat * gaussian(distance(world, edit.center) * inv_stddev) * inv_stddev;
+}
+
+SR_DEF_SHARED_BUFFER(EditEntry, Edits, 64);
 
 [numthreads(4, 4, 4)]
-void Edit(uint3 id : SV_DispatchThreadID)
+void Edit(uint3 cell : SV_DispatchThreadID, uint group_idx : SV_GroupIndex)
 {
+    float heat = 0;
+    float3 world = GRID_CELL2WORLD(FLT_CENTER, cell);
 
+    #define LOAD_EDIT(X) uEdits[X]
+    #define REDUCE_EDIT(E) heat += heat_from_edit(world, E)
+    SR_REDUCE(EditEntry, Edits, 64, group_idx, 0, uEditCount, LOAD_EDIT, REDUCE_EDIT);
+    
+    if (GRID_CELL_IN_GRID_UINT(cell))
+        uTexture_RW[cell] += heat;
 }
