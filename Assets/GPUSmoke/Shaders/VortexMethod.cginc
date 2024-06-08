@@ -1,5 +1,5 @@
 #define VM_EPS 0.02
-#define VM_HEAT_BUOYANCY_FACTOR 10.0
+#define VM_HEAT_BUOYANCY_FACTOR 0.0001
 #define VM_HEAT_CURL_CELL_DELTA 0.5
 
 struct VortexParticle {

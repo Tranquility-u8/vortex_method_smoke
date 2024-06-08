@@ -32,6 +32,11 @@ void Edit(uint3 cell : SV_DispatchThreadID, uint group_idx : SV_GroupIndex)
 {
     float heat = 0;
     float3 world = GRID_CELL2WORLD(FLT_CENTER, cell);
+    
+    // For Debug
+    /* if (GRID_CELL_IN_GRID_UINT(cell))
+        uTexture_RW[cell] += max(1.0 - length(world) / 16.0, 0.0); */
+    
 
     #define LOAD_EDIT(X) uEdits[X]
     #define REDUCE_EDIT(E) heat += heat_from_edit(world, E)

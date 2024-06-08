@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace VortexMethod 
@@ -8,17 +10,17 @@ namespace VortexMethod
     {
         /// <summary>
         /// 
-        /// TODO LISTS£º
-        /// 1£©GPU¼ÓËÙ
-        /// 2£©±ß½çÖµ´¦Àí
-        /// 3£©Óë³¡¾°½»»¥
-        /// 4£©TreecodeÓÅ»¯
+        /// TODO LISTSï¿½ï¿½
+        /// 1ï¿½ï¿½GPUï¿½ï¿½ï¿½ï¿½
+        /// 2ï¿½ï¿½ï¿½ß½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+        /// 3ï¿½ï¿½ï¿½ë³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// 4ï¿½ï¿½Treecodeï¿½Å»ï¿½
         /// 
         /// </summary>
         /// 
         [Header("Particle")]
-        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //Ê±¼ä²½³¤
-        [SerializeField] [Range(0f, 0.1f)] private float EPS; //ËÉ³ÚÒò×Ó
+        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //Ê±ï¿½ä²½ï¿½ï¿½
+        [SerializeField] [Range(0f, 0.1f)] private float EPS; //ï¿½É³ï¿½ï¿½ï¿½ï¿½ï¿½
         
         private int NUM_VORTEX;
         [SerializeField] private int NUM_TRACER;
@@ -29,8 +31,8 @@ namespace VortexMethod
         [SerializeField] [Range(1, 10)] private float HEAT_X_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Y_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Z_SCALE;
-        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //¶¥µãÏ¸·ÖÊý
-        private float HEAT_GRID_SIZE; //Íø¸ñ±ß³¤
+        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½
+        private float HEAT_GRID_SIZE; //ï¿½ï¿½ï¿½ï¿½ß³ï¿½
         private float HEAT_CENTER_DEGREE = 1f;
         [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR;
 
@@ -65,7 +67,7 @@ namespace VortexMethod
             if (Input.GetKeyDown(KeyCode.Return))
             {
 #if UNITY_EDITOR
-                Debug.Log("==========²½½ø==========");
+                Debug.Log("==========ï¿½ï¿½ï¿½ï¿½==========");
 #endif
                 UpdateParticle();
             }
@@ -100,7 +102,7 @@ namespace VortexMethod
         {
             int medium = HEAT_VERTEX_NUM / 2;
 
-            // ³õÊ¼»¯ÎÂ¶È³¡/¸¡Á¦³¡
+            // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Â¶È³ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             heat_field = new List<List<List<float>>>();
             
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -130,8 +132,8 @@ namespace VortexMethod
             }
 
 
-            // ³õÊ¼»¯ÎÐ¶È³¡
-            // vector.x => x·ÖÁ¿ vector.y => z·ÖÁ¿
+            // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ð¶È³ï¿½
+            // vector.x => xï¿½ï¿½ï¿½ï¿½ vector.y => zï¿½ï¿½ï¿½ï¿½
             vortex_field = new List<List<List<Vector2>>>();
 
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -149,9 +151,9 @@ namespace VortexMethod
                 vortex_field.Add(vortex2d);
             }
 
-            // ÓÐÏÞ²î·Ö¼ÆËãÎÐ¶È³¡
+            // ï¿½ï¿½ï¿½Þ²ï¿½Ö¼ï¿½ï¿½ï¿½ï¿½Ð¶È³ï¿½
             // curl(F) = (dFz/y - dFy/z) x + (dFx/z + dFz/x)y + (dFy/x + dFx/y)z 
-            // ¼ÙÉè¸¡Á¦ÏòÉÏ£¬ÔòÓÐdFx = dFz = 0, ËùÒÔcurl(F) = (dFy/z)x + (dFy/x)z
+            // ï¿½ï¿½ï¿½è¸¡ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½dFx = dFz = 0, ï¿½ï¿½ï¿½ï¿½curl(F) = (dFy/z)x + (dFy/x)z
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
             {
 
@@ -212,9 +214,9 @@ namespace VortexMethod
             tracer_particles = new List<Particle>();
             for (int i = 0; i < NUM_TRACER; i++)
             {
-                float x = Random.Range(-1.5f, 1.5f);
-                float y = Random.Range(-0.5f, 0.5f);
-                float z = Random.Range(-1.5f, 1.5f);
+                float x = UnityEngine.Random.Range(-1.5f, 1.5f);
+                float y = UnityEngine.Random.Range(-0.5f, 0.5f);
+                float z = UnityEngine.Random.Range(-1.5f, 1.5f);
                 tracer_particles.Add(new TracerParticle(new Vector3(x, y, z), prefab, transform));
             }
         }
@@ -226,12 +228,16 @@ namespace VortexMethod
             UpdateVortexParticle();
             UpdateTracerParticle();
         }
+        
+        float debug_heat(float x, float y, float z) {
+            return (float)Math.Max(0.0f, 1.0f - Math.Sqrt(x * x + y * y + z * z));
+        }
 
         void UpdateVortexParticle()
         {
             int median = HEAT_VERTEX_NUM / 2;
 
-            //ÎÂ¶È³¡×÷ÓÃ
+            //ï¿½Â¶È³ï¿½ï¿½ï¿½ï¿½ï¿½
             for(int i = 0; i < NUM_VORTEX; i++)
             {
                 Vector3 position = vortex_particles[i].data.pos;
@@ -257,7 +263,7 @@ namespace VortexMethod
                 float left_z = position.z / HEAT_GRID_SIZE + median - z;
                 float right_z = 1 - left_z;
 
-                float increment_x = (
+                /* float increment_x = (
                      right_x * right_y * right_z * vortex_field[x][y][z].x + 
                      right_x * right_y * left_z * vortex_field[x][y][z + 1].x +
                      right_x * left_y * right_z * vortex_field[x][y + 1][z].x + 
@@ -275,12 +281,15 @@ namespace VortexMethod
                      left_x * right_y * right_z * vortex_field[x + 1][y][z].y +
                      left_x * right_y * left_z * vortex_field[x + 1][y][z + 1].y +
                      left_x * left_y * right_z * vortex_field[x + 1][y + 1][z].y +
-                     left_x * left_y * left_z * vortex_field[x + 1][y + 1][z + 1].y) * HEAT_BUOYANCY_FACTOR;
+                     left_x * left_y * left_z * vortex_field[x + 1][y + 1][z + 1].y) * HEAT_BUOYANCY_FACTOR; */
+
+                float increment_x = (debug_heat(position.x, position.y, position.z + 0.5f) - debug_heat(position.x, position.y, position.z - 0.5f)) * HEAT_BUOYANCY_FACTOR;
+                float increment_z = (debug_heat(position.x + 0.5f, position.y, position.z) - debug_heat(position.x - 0.5f, position.y, position.z)) * HEAT_BUOYANCY_FACTOR;
 
                 vortex_particles[i].data.vor += new Vector3(increment_x * Dt, 0f, increment_z * Dt);
             }
 
-            //ÎÐÁ£×ÓÏà»¥×÷ÓÃ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½à»¥ï¿½ï¿½ï¿½ï¿½
             for (int i = 0; i < NUM_VORTEX; i++)
             {
                 tmp_vortex_particles[i] = vortex_particles[i];

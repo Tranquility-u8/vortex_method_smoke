@@ -56,8 +56,8 @@ namespace GPUSmoke
             _vortexCluster.Emit(_flip);
             _tracerCluster.Emit(_flip);
 
-            _vortexCluster.Simulate(_flip, Time.deltaTime);
-            _tracerCluster.Simulate(_flip, !_flip, Time.deltaTime);
+            _vortexCluster.Simulate(_flip, 0.2f);
+            _tracerCluster.Simulate(_flip, !_flip, 0.2f);
             _tracerCluster.Draw(!_flip, Bounds);
 
             _flip = !_flip;
