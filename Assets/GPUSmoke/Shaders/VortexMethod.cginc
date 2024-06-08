@@ -1,3 +1,7 @@
+#define VM_EPS 0.02
+#define VM_HEAT_BUOYANCY_FACTOR 10.0
+#define VM_HEAT_CURL_CELL_DELTA 0.5
+
 struct VortexParticle {
     float3 pos, vor; 
     float life;
@@ -19,13 +23,10 @@ PosVor pos_vor_from_vortex_particle(in const VortexParticle p) {
     return pos_vor;
 }
 
-#define EPS 0.02
 float3 velocity_from_pos_vor(in const float3 pi_pos, in const PosVor pj_pos_vor) {
     float3 d = pi_pos - pj_pos_vor.pos;
-    float r_ij = length(d);
-    float r_ij3 = r_ij * r_ij * r_ij;
-    float factor = 1.0 / (4.0 * 3.1415926 * r_ij3) * (1.0 - exp(-r_ij3 / (EPS * EPS)));
+    float r_ij2 = dot(d, d), r_ij = sqrt(r_ij2), r_ij3 = r_ij2 * r_ij;
+    float factor = (1.0 - exp(-r_ij3 / (VM_EPS * VM_EPS))) / (4.0 * 3.1415926 * r_ij3);
     factor = isnan(factor) || isinf(factor) ? 0 : factor;
     return cross(pj_pos_vor.vor, d) * factor;
 }
-#undef EPS

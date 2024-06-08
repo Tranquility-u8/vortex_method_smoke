@@ -644,10 +644,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NUM_TRACER: 10000
   vortex_particle_configs:
-  - pos: {x: 0, y: 1, z: 0}
-    vor: {x: 0, y: 0, z: 2}
-  - pos: {x: 0, y: -1, z: 0}
-    vor: {x: 0, y: 0, z: 1}
+  - pos: {x: 1, y: 0.5, z: 0}
+    vor: {x: 0, y: 0, z: -0.2}
+  - pos: {x: -1, y: 0.5, z: 0}
+    vor: {x: 0, y: 0, z: 0.2}
+  - pos: {x: 0, y: 0.5, z: -1}
+    vor: {x: -0.2, y: 0, z: 0}
+  - pos: {x: 0, y: 0.5, z: 1}
+    vor: {x: 0.2, y: 0, z: 0}
 --- !u!114 &2005683826
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661,8 +665,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 16, y: 16, z: 16}
+    m_Center: {x: 0, y: 8, z: 0}
+    m_Extent: {x: 16, y: 8, z: 16}
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 1024
@@ -671,7 +675,7 @@ MonoBehaviour:
   MaxTracerEmitCount: 4096
   ParticleMaterial: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
   HeatFieldShader: {fileID: 7200000, guid: 2093a7ddb71a221eda939fd4db958a2e, type: 3}
-  HeatFieldMaxGridSize: 32
+  HeatFieldMaxGridSize: 64
   HeatFieldMaxEditCount: 1024
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

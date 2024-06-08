@@ -29,9 +29,9 @@ namespace GPUSmoke
 
         void Awake()
         {
-            _vortexCluster = new(VortexComputeShader, MaxVortexParticleCount, MaxVortexEmitCount);
-            _tracerCluster = new(ParticleMaterial, TracerComputeShader, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
             _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEditCount);
+            _vortexCluster = new(VortexComputeShader, _heatField, MaxVortexParticleCount, MaxVortexEmitCount);
+            _tracerCluster = new(ParticleMaterial, TracerComputeShader, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
         }
 
         void OnDisable()
@@ -46,10 +46,10 @@ namespace GPUSmoke
 
         void Update()
         {
-            float x = UnityEngine.Random.Range(-0.2f, 0.2f);
+            /* float x = UnityEngine.Random.Range(-0.2f, 0.2f);
             float y = UnityEngine.Random.Range(-0.2f, 0.2f);
             float z = UnityEngine.Random.Range(-0.2f, 0.2f);
-            _tracerCluster.Emits.Add(new TracerParticle(new Vector3(x, y, z), 1.0f));
+            _tracerCluster.Emits.Add(new TracerParticle(new Vector3(x, y, z), 1.0f)); */
             
             _heatField.Edit();
 

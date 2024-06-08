@@ -8,6 +8,11 @@
 #include "ParticleCluster.cginc"
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
+#include "Grid.cginc"
+
+_GRID_DEF_UNIFORM(Heat);
+Texture3D<float> uHeatTexture;
+SamplerState sampler_uHeatTexture;
 
 StructuredBuffer<VortexParticle> uEmits;
 uint uEmitCount;
@@ -40,21 +45,42 @@ void SimulateDispatch() {
     PC_COUNT(REF_DST) = 0; 
 }
 
+float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
+    float3 uvw = _GRID_WORLD2UVW(Heat, pos);
+    float2 uvw_dxz = _GRID_UNIT_CELL2UVW(Heat).xz * VM_HEAT_CURL_CELL_DELTA;
+    float world_d = _GRID_UNIT_CELL2WORLD(Heat) * VM_HEAT_CURL_CELL_DELTA;
+    float fy_p = uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0);
+    float d_fy_dz = (
+            uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0], uvw[1], uvw[2] + uvw_dxz[1] * 0.5), 0) - 
+            uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0], uvw[1], uvw[2] - uvw_dxz[1] * 0.5), 0)
+        ) / world_d;
+    float d_fy_dx = (
+            uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0] + uvw_dxz[0] * 0.5, uvw[1], uvw[2]), 0) - 
+            uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0] - uvw_dxz[0] * 0.5, uvw[1], uvw[2]), 0)
+        ) / world_d;
+    return float2(d_fy_dz, d_fy_dx) * VM_HEAT_BUOYANCY_FACTOR;
+}
+
 SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     uint src_idx = id.x, src_count = PC_COUNT(SRC);
     VortexParticle p = PC_GET(SRC_SAFE, src_idx);
-    
+    p.life -= uDeltaTime;
+
+    // Update Vortex
+    float2 vor_dxz = buoyancy_curl_xz_from_pos(p.pos);
+    p.vor.x += vor_dxz[0] * uDeltaTime;
+    p.vor.z += vor_dxz[1] * uDeltaTime;
+
+    // Update Position
     float3 v = float3(0, 0, 0);
     #define LOAD_POS_VOR(X) pos_vor_from_vortex_particle(uParticles[X])
     #define REDUCE_POS_VOR(P) v += velocity_from_pos_vor(p.pos, P)
     uint s = PC_IDX(SRC, 0), t = s + src_count;
     SR_REDUCE(PosVor, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
-
     p.pos += v * uDeltaTime;
-    p.life -= uDeltaTime;
 
     if (src_idx < src_count && p.life >= 0)
         PC_PUSH(DST_UNSAFE, p);

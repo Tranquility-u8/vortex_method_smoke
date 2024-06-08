@@ -45,13 +45,13 @@ namespace GPUSmoke
 
             for (int i = 0; i < NUM_TRACER; i++)
             {
-                float x = Random.Range(-0.5f, 0.5f);
-                float y = Random.Range(-1.5f, 1.5f);
-                float z = Random.Range(-0.5f, 0.5f);
+                float x = Random.Range(-1.5f, 1.5f);
+                float y = Random.Range(-0.5f, 0.5f);
+                float z = Random.Range(-1.5f, 1.5f);
                 _smokeSystem.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
             }
             
-            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 100.0f, 1.0f));
+            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 100.0f, 3.0f));
         }
     }
 }
