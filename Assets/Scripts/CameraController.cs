@@ -9,17 +9,23 @@ namespace VortexMethod
     {
         [SerializeField] private float mouseSensitivity = 80.0f;
         [SerializeField] private float speed = 0.3f;
+        public bool rotationLock;
         
         private Vector3 cameraPosition;  
         
         private void Awake()
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            rotationLock = false;
+            //Cursor.lockState = CursorLockMode.Locked;
         }
 
         void Update()
         {
-            RotateView();
+            if (!rotationLock)
+            {
+                RotateView();
+            }
+            
             Move();
         }
 
