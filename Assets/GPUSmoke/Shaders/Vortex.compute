@@ -14,6 +14,9 @@ _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
 SamplerState sampler_uHeatTexture;
 
+_VM_DEF_UNIFORM(VM);
+_VM_DEF_FUNC(VM);
+
 StructuredBuffer<VortexParticle> uEmits;
 uint uEmitCount;
 
@@ -46,13 +49,14 @@ void SimulateDispatch() {
 }
 
 /* float heat(in const float3 pos) {
+    // return 100 - pos.y;
     return max(0.0, 1.0 - length(pos) / 16.0);
 } */
 
 float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
     float3 uvw = _GRID_WORLD2UVW(Heat, pos);
-    float2 uvw_dxz = _GRID_UNIT_CELL2UVW(Heat).xz * VM_HEAT_CURL_CELL_DELTA;
-    float world_d = _GRID_UNIT_CELL2WORLD(Heat) * VM_HEAT_CURL_CELL_DELTA;
+    float2 uvw_dxz = _GRID_UNIT_CELL2UVW(Heat).xz;
+    float world_d = _GRID_UNIT_CELL2WORLD(Heat);
     float fy_p = uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0);
     float d_fy_dz = (
             uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0], uvw[1], uvw[2] + uvw_dxz[1] * 0.5), 0) - 
@@ -70,7 +74,7 @@ float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
             heat(float3(pos[0] + 0.5, pos[1], pos[2])) - 
             heat(float3(pos[0] - 0.5, pos[1], pos[2]))
         ); */
-    return float2(d_fy_dz, d_fy_dx) * VM_HEAT_BUOYANCY_FACTOR;
+    return float2(d_fy_dz, d_fy_dx) * _VM_HEAT_BUOYANCY_FACTOR(VM);
 }
 
 SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);

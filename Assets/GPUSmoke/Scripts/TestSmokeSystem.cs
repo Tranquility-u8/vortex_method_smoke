@@ -9,9 +9,8 @@ namespace GPUSmoke
         private int NUM_VORTEX;
         [SerializeField] private int NUM_TRACER;
         [SerializeField] private List<ParticleConfig> vortex_particle_configs;
+        [SerializeField] private SmokeSystem _smokeSystem;
         
-        private SmokeSystem _smokeSystem;
-
 
         [System.Serializable]
         private class ParticleConfig 
@@ -37,7 +36,6 @@ namespace GPUSmoke
 
         void Init()
         {
-            _smokeSystem = GetComponent<SmokeSystem>();
             NUM_VORTEX = vortex_particle_configs.Count;
 
             for (int i = 0; i < NUM_VORTEX; i++)
@@ -51,7 +49,7 @@ namespace GPUSmoke
                 _smokeSystem.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
             }
             
-            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 100.0f, 3.0f));
+            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 300.0f, 2.0f));
         }
     }
 }

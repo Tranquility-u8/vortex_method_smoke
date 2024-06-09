@@ -8,14 +8,25 @@ namespace GPUSmoke
     public class SmokeSystem : MonoBehaviour
     {
         public Bounds Bounds;
+        public float TimeScale = 1.0f;
 
-        public ComputeShader VortexComputeShader, TracerComputeShader;
-        public int MaxVortexParticleCount, MaxVortexEmitCount;
-        public int MaxTracerParticleCount, MaxTracerEmitCount;
-        public Material ParticleMaterial;
+        [Header("Particle")]
+        [SerializeField] private ComputeShader VortexComputeShader;
+        [SerializeField] private ComputeShader TracerComputeShader;
+        [SerializeField] private int MaxVortexParticleCount;
+        [SerializeField] private int MaxVortexEmitCount;
+        [SerializeField] private int MaxTracerParticleCount;
+        [SerializeField] private int MaxTracerEmitCount;
+        [SerializeField] private Material ParticleMaterial;
 
-        public ComputeShader HeatFieldShader;
-        public int HeatFieldMaxGridSize, HeatFieldMaxEditCount;
+        [Header("Heat Field")]
+        [SerializeField] private ComputeShader HeatFieldShader;
+        [SerializeField] private int HeatFieldMaxGridSize;
+        [SerializeField] private int HeatFieldMaxEditCount;
+
+        [Header("Vortex Method")]
+        [SerializeField] private float Epsilon;
+        [SerializeField] private float HeatBuoyancyFactor;
 
         private VortexParticleCluster _vortexCluster;
         private TracerParticleCluster _tracerCluster;
@@ -29,9 +40,13 @@ namespace GPUSmoke
 
         void Awake()
         {
+            VortexMethodConfig vm_config = new() {
+                epsilon = Epsilon,
+                heat_buoyancy_factor = HeatBuoyancyFactor
+            };
             _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEditCount);
-            _vortexCluster = new(VortexComputeShader, _heatField, MaxVortexParticleCount, MaxVortexEmitCount);
-            _tracerCluster = new(ParticleMaterial, TracerComputeShader, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
+            _vortexCluster = new(VortexComputeShader, _heatField, vm_config, MaxVortexParticleCount, MaxVortexEmitCount);
+            _tracerCluster = new(ParticleMaterial, TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
         }
 
         void OnDisable()
@@ -56,8 +71,8 @@ namespace GPUSmoke
             _vortexCluster.Emit(_flip);
             _tracerCluster.Emit(_flip);
 
-            _vortexCluster.Simulate(_flip, 0.2f);
-            _tracerCluster.Simulate(_flip, !_flip, 0.2f);
+            _vortexCluster.Simulate(_flip, Time.deltaTime * TimeScale);
+            _tracerCluster.Simulate(_flip, !_flip, Time.deltaTime * TimeScale);
             _tracerCluster.Draw(!_flip, Bounds);
 
             _flip = !_flip;

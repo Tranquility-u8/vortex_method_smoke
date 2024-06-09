@@ -7,11 +7,18 @@ namespace GPUSmoke
     {
         readonly VortexParticleCluster _vortexCluster;
         public VortexParticleCluster VortexCluster { get => _vortexCluster; }
-        public TracerParticleCluster(Material material, ComputeShader shader, VortexParticleCluster vortex_cluster, int max_particle_count, int max_emit_count)
-            : base(material, shader, max_particle_count, max_emit_count)
+        public TracerParticleCluster(
+            Material material, 
+            ComputeShader shader, 
+            VortexMethodConfig vortex_method_config, 
+            VortexParticleCluster vortex_cluster, 
+            int max_particle_count, 
+            int max_emit_count
+            ) : base(material, shader, max_particle_count, max_emit_count)
         {
             _vortexCluster = vortex_cluster;
 
+            vortex_method_config.SetShaderUniform(shader, "VM");
             Shader.SetInt("uVortexMaxParticleCount", _vortexCluster.MaxParticleCount);
             Shader.SetBuffer(SimulateKernel, "uVortexParticles", _vortexCluster.ParticleBuffer);
             Shader.SetBuffer(SimulateKernel, "uVortexParticleCount", _vortexCluster.CountBuffer);

@@ -34,7 +34,7 @@ namespace VortexMethod
         [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //����ϸ����
         private float HEAT_GRID_SIZE; //����߳�
         private float HEAT_CENTER_DEGREE = 1f;
-        [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR;
+        [SerializeField] private float HEAT_BUOYANCY_FACTOR;
 
         [Header("Particle Prefab")]
         [SerializeField] private GameObject prefab;

@@ -10,6 +10,9 @@
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
 
+_VM_DEF_UNIFORM(VM);
+_VM_DEF_FUNC(VM);
+
 StructuredBuffer<TracerParticle> uEmits;
 uint uEmitCount;
 

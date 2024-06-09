@@ -653,7 +653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c858d546105db7e89ad50dd5149d62cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Dt: 0.2
+  Dt: 0.02
   EPS: 0.02
   NUM_TRACER: 2000
   vortex_particle_configs:
@@ -670,7 +670,7 @@ MonoBehaviour:
   HEAT_Y_SCALE: 1
   HEAT_Z_SCALE: 1
   HEAT_VERTEX_NUM: 25
-  HEAT_BUOYANCY_FACTOR: 0.00091
+  HEAT_BUOYANCY_FACTOR: 10
   prefab: {fileID: 5211116387577698578, guid: 199db34a1a4434749b0f398ffa5ec53b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
