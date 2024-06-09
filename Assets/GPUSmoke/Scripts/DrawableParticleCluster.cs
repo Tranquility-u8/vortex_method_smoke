@@ -44,7 +44,7 @@ namespace GPUSmoke
             _material.SetInt("uFlip", src_flip ? 1 : 0);
 
             Shader.Dispatch(_drawDispatchKernel, 1, 1, 1);
-            Graphics.DrawProceduralIndirect(_material, bounds, MeshTopology.Points, _drawCommandBuffer);
+            Graphics.DrawProceduralIndirect(_material, bounds, MeshTopology.Triangles, _drawCommandBuffer);
         }
     }
 

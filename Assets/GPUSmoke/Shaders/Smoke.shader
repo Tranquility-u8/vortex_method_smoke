@@ -13,7 +13,6 @@ Shader "Unlit/Smoke"
 			#pragma target 5.0
 
 			#pragma vertex vert
-			#pragma geometry geom
 			#pragma fragment frag
 
 			#include "UnityCG.cginc"
@@ -27,51 +26,30 @@ Shader "Unlit/Smoke"
 			Texture2D _SpriteTex;
 			SamplerState sampler_SpriteTex;
 
-			struct V2G
-			{
-				float4 pos : SV_POSITION;
-			};
-			struct G2F
+			struct V2F
 			{
 				float4 pos : SV_POSITION;
 				float2 texcoord : TEXCOORD0;
 			};
 
-			V2G vert(uint id : SV_VertexID)
+			V2F vert(uint id : SV_VertexID)
 			{
-				V2G o;
-				o.pos = mul(UNITY_MATRIX_VP, float4(PC_GET(SRC_UNSAFE, id).pos, 1.0));
+				float4 c = mul(UNITY_MATRIX_VP, float4(PC_GET(SRC_UNSAFE, id / 6u).pos, 1.0));
+				float4 dx = UNITY_MATRIX_P[0] * _Radius;
+				float4 dy = UNITY_MATRIX_P[1] * _Radius;
+
+				id %= 6u;
+				id = id < 3u ? id : 6u - id;
+				int ix = id >> 1u, iy = id & 1u;
+
+				V2F o;
+				o.pos = c + dx * (ix * 2 - 1) + dy * (iy * 2 - 1);
+				o.texcoord = float2(ix, iy);
 				
 				return o;
 			}
 			
-			
-			[maxvertexcount(4)]
-			void geom(point V2G p[1], inout TriangleStream<G2F> tri) {
-				float4 c = p[0].pos;
-				float4 dx = UNITY_MATRIX_P[0] * _Radius;
-				float4 dy = UNITY_MATRIX_P[1] * _Radius;
-				
-				G2F o;
-
-				o.pos = c + dx + dy;
-				o.texcoord = float2(0, 0);
-				tri.Append(o);
-
-				o.pos = c + dx - dy;
-				o.texcoord = float2(0, 1);
-				tri.Append(o);
-
-				o.pos = c - dx + dy;
-				o.texcoord = float2(1, 0);
-				tri.Append(o);
-
-				o.pos = c - dx - dy;
-				o.texcoord = float2(1, 1);
-				tri.Append(o);
-			}
-
-			float4 frag(G2F i) : COLOR
+			float4 frag(V2F i) : COLOR
 			{
 				return _SpriteTex.Sample(sampler_SpriteTex, i.texcoord);
 			}

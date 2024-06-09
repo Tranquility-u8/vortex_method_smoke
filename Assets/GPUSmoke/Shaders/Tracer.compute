@@ -87,7 +87,7 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
 
 [numthreads(1, 1, 1)]
 void DrawDispatch() {
-    uDrawCommand_RW[0] = PC_COUNT(SRC);
+    uDrawCommand_RW[0] = PC_COUNT(SRC) * 6; // Times 6 for Triangle
     uDrawCommand_RW[1] = 1;
     uDrawCommand_RW[2] = 0;
     uDrawCommand_RW[3] = 0;
