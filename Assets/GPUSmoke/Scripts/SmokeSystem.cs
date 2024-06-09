@@ -46,7 +46,7 @@ namespace GPUSmoke
             };
             _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEditCount);
             _vortexCluster = new(VortexComputeShader, _heatField, vm_config, MaxVortexParticleCount, MaxVortexEmitCount);
-            _tracerCluster = new(ParticleMaterial, TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
+            _tracerCluster = new(ParticleMaterial, TracerComputeShader, _heatField, vm_config, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
         }
 
         void OnDisable()

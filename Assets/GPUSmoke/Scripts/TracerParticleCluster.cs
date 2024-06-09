@@ -10,6 +10,7 @@ namespace GPUSmoke
         public TracerParticleCluster(
             Material material, 
             ComputeShader shader, 
+            HeatField heat_field,
             VortexMethodConfig vortex_method_config, 
             VortexParticleCluster vortex_cluster, 
             int max_particle_count, 
@@ -22,6 +23,9 @@ namespace GPUSmoke
             Shader.SetInt("uVortexMaxParticleCount", _vortexCluster.MaxParticleCount);
             Shader.SetBuffer(SimulateKernel, "uVortexParticles", _vortexCluster.ParticleBuffer);
             Shader.SetBuffer(SimulateKernel, "uVortexParticleCount", _vortexCluster.CountBuffer);
+
+            heat_field.SetShaderUniform(shader, "Heat");
+            shader.SetTexture(SimulateKernel, "uHeatTexture", heat_field.Texture);
         }
 
         public void Simulate(bool src_flip, bool vortex_src_flip, float delta_time)

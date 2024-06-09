@@ -57,7 +57,6 @@ float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
     float3 uvw = _GRID_WORLD2UVW(Heat, pos);
     float2 uvw_dxz = _GRID_UNIT_CELL2UVW(Heat).xz;
     float world_d = _GRID_UNIT_CELL2WORLD(Heat);
-    float fy_p = uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0);
     float d_fy_dz = (
             uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0], uvw[1], uvw[2] + uvw_dxz[1] * 0.5), 0) - 
             uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0], uvw[1], uvw[2] - uvw_dxz[1] * 0.5), 0)
@@ -75,6 +74,11 @@ float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
             heat(float3(pos[0] - 0.5, pos[1], pos[2]))
         ); */
     return float2(d_fy_dz, d_fy_dx) * _VM_HEAT_BUOYANCY_FACTOR(VM);
+}
+
+float buoyancy_velocity_from_pos(in const float3 pos) {
+    float3 uvw = _GRID_WORLD2UVW(Heat, pos);
+    return uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0) * _VM_HEAT_BUOYANCY_FACTOR(VM);
 }
 
 SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);
@@ -96,7 +100,14 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     #define REDUCE_POS_VOR(P) v += velocity_from_pos_vor(p.pos, P)
     uint s = PC_IDX(SRC, 0), t = s + src_count;
     SR_REDUCE(PosVor, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
+
+    v.y += buoyancy_velocity_from_pos(p.pos);
     p.pos += v * uDeltaTime;
+    /* if (p.pos.y <= 10)
+        v.y += buoyancy_velocity_from_pos(p.pos);
+    p.pos += v * uDeltaTime;
+    if (p.pos.y > 10)
+        p.pos.y = 10 - abs(v.y) * uDeltaTime; */
 
     if (src_idx < src_count && p.life >= 0)
         PC_PUSH(DST_UNSAFE, p);

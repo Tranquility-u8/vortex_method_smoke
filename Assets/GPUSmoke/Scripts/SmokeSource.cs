@@ -80,8 +80,7 @@ namespace GPUSmoke
         private void SpawnVortex_()
         {
             var pos = UnityEngine.Random.insideUnitSphere * VortexSpawnRadius;
-            var vor = Vector3.Cross(Vector3.up, new Vector3(pos.x, pos.y, pos.z));
-            vor = Vector3.Normalize(vor) * UnityEngine.Random.Range(MinVorticity, MaxVorticity);
+            var vor = UnityEngine.Random.onUnitSphere * UnityEngine.Random.Range(MinVorticity, MaxVorticity);
             var life = UnityEngine.Random.Range(MinLifespan, MaxLifespan);
             SmokeSystem.VortexEmits.Add(new VortexParticle(transform.position + pos, vor, life));
         }

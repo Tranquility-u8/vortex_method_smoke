@@ -652,6 +652,61 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 09eaa5f468d1a494e849f81179e78929, type: 2}
+--- !u!1 &1560767384
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1560767386}
+  - component: {fileID: 1560767385}
+  m_Layer: 0
+  m_Name: SmokeSource2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1560767385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560767384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39511e5955bac1a8fb2884817150227c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmokeSystem: {fileID: 2005683826}
+  Heat: 100
+  HeatStddev: 6
+  VortexSpawnRadius: 0.25
+  VortexSpawnTime: 0.01
+  TracerSpawnRadius: 0.5
+  TracerSpawnTime: 0.001
+  MinVorticity: 3
+  MaxVorticity: 5
+  MinLifespan: 5
+  MaxLifespan: 7
+--- !u!4 &1560767386
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560767384}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.66, y: 0, z: 3.88}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1682061158
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,10 +737,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SmokeSystem: {fileID: 2005683826}
-  Heat: 100
-  HeatStddev: 1
+  Heat: 50
+  HeatStddev: 4
   VortexSpawnRadius: 0.5
-  VortexSpawnTime: 0.05
+  VortexSpawnTime: 0.01
   TracerSpawnRadius: 1
   TracerSpawnTime: 0.001
   MinVorticity: 5
@@ -752,8 +807,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bounds:
-    m_Center: {x: 0, y: 8, z: 0}
-    m_Extent: {x: 16, y: 8, z: 16}
+    m_Center: {x: 0, y: 16, z: 0}
+    m_Extent: {x: 16, y: 16, z: 16}
   TimeScale: 1
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
@@ -766,7 +821,7 @@ MonoBehaviour:
   HeatFieldMaxGridSize: 32
   HeatFieldMaxEditCount: 1024
   Epsilon: 0.02
-  HeatBuoyancyFactor: 2
+  HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -778,3 +833,4 @@ SceneRoots:
   - {fileID: 258623131}
   - {fileID: 550548548}
   - {fileID: 1682061160}
+  - {fileID: 1560767386}
