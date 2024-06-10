@@ -11,22 +11,22 @@ namespace GPUSmoke
         public float TimeScale = 1.0f;
 
         [Header("Particle")]
-        [SerializeField] private ComputeShader VortexComputeShader;
-        [SerializeField] private ComputeShader TracerComputeShader;
-        [SerializeField] private int MaxVortexParticleCount;
-        [SerializeField] private int MaxVortexEmitCount;
-        [SerializeField] private int MaxTracerParticleCount;
-        [SerializeField] private int MaxTracerEmitCount;
-        [SerializeField] private Material ParticleMaterial;
+        public ComputeShader VortexComputeShader;
+        public ComputeShader TracerComputeShader;
+        public int MaxVortexParticleCount;
+        public int MaxVortexEmitCount;
+        public int MaxTracerParticleCount;
+        public int MaxTracerEmitCount;
+        public Material ParticleMaterial;
 
         [Header("Heat Field")]
-        [SerializeField] private ComputeShader HeatFieldShader;
-        [SerializeField] private int HeatFieldMaxGridSize;
-        [SerializeField] private int HeatFieldMaxEditCount;
+        public ComputeShader HeatFieldShader;
+        public int HeatFieldMaxGridSize;
+        public int HeatFieldMaxEntryCount;
 
         [Header("Vortex Method")]
-        [SerializeField] private float Epsilon;
-        [SerializeField] private float HeatBuoyancyFactor;
+        public float Epsilon;
+        public float HeatBuoyancyFactor;
 
         private VortexParticleCluster _vortexCluster;
         private TracerParticleCluster _tracerCluster;
@@ -35,7 +35,7 @@ namespace GPUSmoke
 
         public List<VortexParticle> VortexEmits { get => _vortexCluster.Emits; }
         public List<TracerParticle> TracerEmits { get => _tracerCluster.Emits; }
-        public List<HeatFieldEdit> HeatFieldEdits { get => _heatField.Edits; }
+        public HeatField HeatField { get => _heatField; }
 
 
         void Awake()
@@ -44,7 +44,7 @@ namespace GPUSmoke
                 epsilon = Epsilon,
                 heat_buoyancy_factor = HeatBuoyancyFactor
             };
-            _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEditCount);
+            _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEntryCount);
             _vortexCluster = new(VortexComputeShader, _heatField, vm_config, MaxVortexParticleCount, MaxVortexEmitCount);
             _tracerCluster = new(ParticleMaterial, TracerComputeShader, _heatField, vm_config, _vortexCluster, MaxTracerParticleCount, MaxTracerEmitCount);
         }
@@ -66,7 +66,7 @@ namespace GPUSmoke
             float z = UnityEngine.Random.Range(-0.2f, 0.2f);
             _tracerCluster.Emits.Add(new TracerParticle(new Vector3(x, y, z), 1.0f)); */
             
-            _heatField.Edit();
+            _heatField.Update();
 
             _vortexCluster.Emit(_flip);
             _tracerCluster.Emit(_flip);

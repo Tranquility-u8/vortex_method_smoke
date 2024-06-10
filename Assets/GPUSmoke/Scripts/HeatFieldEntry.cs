@@ -3,12 +3,14 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public struct HeatFieldEdit : IStruct<float>
+    public enum HeatFieldEntryID : int {};
+
+    public struct HeatFieldEntry : IStruct<float>
     {
         public Vector3 center;
         public float heat, stddev;
 
-        public HeatFieldEdit(Vector3 center, float heat, float stddev)
+        public HeatFieldEntry(Vector3 center, float heat, float stddev)
         {
             this.center = center;
             this.heat = heat;
@@ -25,5 +27,4 @@ namespace GPUSmoke
             dst[4] = stddev;
         }
     }
-
 }

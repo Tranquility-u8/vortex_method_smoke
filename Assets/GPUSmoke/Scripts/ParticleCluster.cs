@@ -58,9 +58,8 @@ namespace GPUSmoke
             }
 
             // Flatten Data
-            int b = Emits.Count - emit_count;
-            W[] emit_data = StructUtil<W, T>.ToWords(Emits.GetRange(b, emit_count));
-            Emits.RemoveRange(b, emit_count);
+            W[] emit_data = StructUtil<W, T>.ToWords(Emits.GetRange(0, emit_count));
+            Emits.Clear();
 
             // Dispatch
             _shader.SetInt("uFlip", src_flip ? 1 : 0);

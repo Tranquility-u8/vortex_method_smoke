@@ -1,37 +1,40 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace GPUSmoke
 {
     public class HeatField : Grid
     {
-        private readonly int _maxEditCount;
-        private readonly List<HeatFieldEdit> _edits;
+        private readonly int _maxEntryCount;
+        private int _allocEntryID = 0;
+        private bool _entryChanged = false;
+        private readonly Dictionary<HeatFieldEntryID, HeatFieldEntry> _entries;
 
         private readonly ComputeShader _shader;
-        private readonly int _editKernel;
-        private readonly uint _editKernelGroupX, _editKernelGroupY, _editKernelGroupZ;
+        private readonly int _updateKernel;
+        private readonly uint _updateKernelGroupX, _updateKernelGroupY, _updateKernelGroupZ;
 
         private RenderTexture _texture;
-        private ComputeBuffer _editBuffer;
+        private ComputeBuffer _entryBuffer;
 
-        public List<HeatFieldEdit> Edits { get => _edits; }
         public RenderTexture Texture { get => _texture; }
 
-        public HeatField(ComputeShader shader, Bounds bounds, int max_grid_size, int max_edit_count)
+        public HeatField(ComputeShader shader, Bounds bounds, int max_grid_size, int max_entry_count)
             : base(bounds, max_grid_size)
         {
             // Shader
             _shader = shader;
-            _editKernel = shader.FindKernel("Edit");
-            _shader.GetKernelThreadGroupSizes(_editKernel, out _editKernelGroupX, out _editKernelGroupY, out _editKernelGroupZ);
+            _updateKernel = shader.FindKernel("Update");
+            _shader.GetKernelThreadGroupSizes(_updateKernel, out _updateKernelGroupX, out _updateKernelGroupY, out _updateKernelGroupZ);
 
-            // Edit Buffer
-            _maxEditCount = max_edit_count;
-            _edits = new();
-            _editBuffer = new ComputeBuffer(max_edit_count, StructUtil<float, HeatFieldEdit>.ByteCount);
+            // Entry Buffer
+            _maxEntryCount = max_entry_count;
+            _entries = new();
+            _entryBuffer = new ComputeBuffer(max_entry_count, StructUtil<float, HeatFieldEntry>.ByteCount);
 
             // Texture
             _texture = new(GridSize.x, GridSize.y, 0, RenderTextureFormat.RHalf, 1)
@@ -46,36 +49,57 @@ namespace GPUSmoke
 
             // Binds
             SetShaderUniform(_shader);
-            _shader.SetTexture(_editKernel, "uTexture_RW", _texture);
-            _shader.SetBuffer(_editKernel, "uEdits", _editBuffer);
+            _shader.SetTexture(_updateKernel, "uTexture_RW", _texture);
+            _shader.SetBuffer(_updateKernel, "uEntries", _entryBuffer);
         }
-        
-        public void Edit() {
-            int edit_count = Math.Min(_maxEditCount, _edits.Count);
-            if (edit_count == 0) {
-                _edits.Clear();
+
+        public HeatFieldEntryID AddEntry(HeatFieldEntry entry)
+        {
+            var entry_id = (HeatFieldEntryID)_allocEntryID++;
+            _entries[entry_id] = entry;
+            _entryChanged = true;
+            return entry_id;
+        }
+        public void SetEntry(HeatFieldEntryID entry_id, HeatFieldEntry entry)
+        {
+            var prev_entry = _entries[entry_id];
+            if (!entry.Equals(prev_entry))
+                _entryChanged = true;
+            _entries[entry_id] = entry;
+        }
+        public void RemoveEntry(HeatFieldEntryID entry_id)
+        {
+            _entries.Remove(entry_id);
+            _entryChanged = true;
+        }
+
+        public void Update()
+        {
+            if (_entryChanged == false)
                 return;
-            }
-            // Flatten Data
-            int b = _edits.Count - edit_count;
-            float[] edit_data = StructUtil<float, HeatFieldEdit>.ToWords(_edits.GetRange(b, edit_count));
-            _edits.RemoveRange(b, edit_count);
+            _entryChanged = false;
+
+            // Transfer
+            int entry_count = Math.Min(_entries.Count, _maxEntryCount);
+            float[] entry_data = StructUtil<float, HeatFieldEntry>.ToWords(_entries.Values.Take(entry_count), entry_count);
+            _entryBuffer.SetData(entry_data);
 
             // Dispatch
-            _shader.SetInt("uEditCount", edit_count);
-            _editBuffer.SetData(edit_data);
+            _shader.SetInt("uEntryCount", entry_count);
             _shader.Dispatch(
-                _editKernel, 
-                (GridSize.x + (int)_editKernelGroupX - 1) / (int)_editKernelGroupX,
-                (GridSize.y + (int)_editKernelGroupY - 1) / (int)_editKernelGroupY,
-                (GridSize.z + (int)_editKernelGroupZ - 1) / (int)_editKernelGroupZ
+                _updateKernel,
+                (GridSize.x + (int)_updateKernelGroupX - 1) / (int)_updateKernelGroupX,
+                (GridSize.y + (int)_updateKernelGroupY - 1) / (int)_updateKernelGroupY,
+                (GridSize.z + (int)_updateKernelGroupZ - 1) / (int)_updateKernelGroupZ
             );
         }
-        
-        public void Destroy() {
-            if (_editBuffer != null) {
-                _editBuffer.Release();
-                _editBuffer = null;
+
+        public void Destroy()
+        {
+            if (_entryBuffer != null)
+            {
+                _entryBuffer.Release();
+                _entryBuffer = null;
                 _texture.Release();
                 _texture = null;
             }

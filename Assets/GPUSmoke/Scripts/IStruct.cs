@@ -22,5 +22,14 @@ namespace GPUSmoke
             }
             return words;
         }
+        public static W[] ToWords(IEnumerable<T> range, int count) { 
+            int unit = WordCount, ofst = 0;
+            W[] words = new W[unit * count];
+            foreach (var e in range) {
+                e.ToWords(words.AsSpan().Slice(ofst, unit));
+                ofst += unit;
+            }
+            return words;
+        }
     }
 }

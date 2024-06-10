@@ -30,41 +30,25 @@ namespace GPUSmoke
 
 
         // Maintain Heat
-        private Vector3 _prevHeatPos;
-        private float _prevHeat, _prevHeatStddev;
+        private HeatFieldEntryID _heatEntryID;
 
         // Timer for Spawner
         private float _vortexTimer = 0, _tracerTimer = 0;
 
         void Start()
         {
-            SetHeat();
+            _heatEntryID = SmokeSystem.HeatField.AddEntry(new HeatFieldEntry(transform.position, Heat, HeatStddev));
         }
 
-        /* void OnDisable()
-        {
-            SmokeSystem?.HeatFieldEdits?.Add(new HeatFieldEdit(transform.position, -Heat, HeatStddev));
-        } */
-
-        private void SetHeat()
-        {
-            _prevHeatPos = transform.position;
-            _prevHeat = Heat;
-            _prevHeatStddev = HeatStddev;
-            SmokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(transform.position, Heat, HeatStddev));
+        public void OnDestroy() {
+            SmokeSystem.HeatField.RemoveEntry(_heatEntryID);
         }
-        
+
         private void MaintainHeat()
         {
-            if (Heat != _prevHeat || HeatStddev != _prevHeatStddev || transform.position != _prevHeatPos)
-            {
-                // Remove Previous Heat
-                SmokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(_prevHeatPos, -_prevHeat, _prevHeatStddev));
-                // Set New Heat
-                SetHeat();
-            }
+            SmokeSystem.HeatField.SetEntry(_heatEntryID, new HeatFieldEntry(transform.position, Heat, HeatStddev));
         }
-
+    
         private void Spawn_(ref float timer, float spawn_time, float delta_time, Action spawner)
         {
             timer += delta_time;

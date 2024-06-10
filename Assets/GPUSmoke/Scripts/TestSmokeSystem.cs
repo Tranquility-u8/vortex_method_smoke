@@ -49,7 +49,7 @@ namespace GPUSmoke
                 _smokeSystem.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), float.PositiveInfinity));
             }
             
-            _smokeSystem.HeatFieldEdits.Add(new HeatFieldEdit(Vector3.zero, 300.0f, 2.0f));
+            _smokeSystem.HeatField.AddEntry(new HeatFieldEntry(Vector3.zero, 300.0f, 2.0f));
         }
     }
 }

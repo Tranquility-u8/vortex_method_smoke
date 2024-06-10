@@ -1,10 +1,10 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel Edit
+#pragma kernel Update
 
 #include "SharedReduce.cginc"
 #include "Grid.cginc"
 
-struct EditEntry {
+struct Entry {
     float3 center;
     float heat, stddev;
 };
@@ -12,8 +12,8 @@ struct EditEntry {
 RWTexture3D<float> uTexture_RW;
 GRID_DEF_UNIFORM;
 
-StructuredBuffer<EditEntry> uEdits;
-uint uEditCount;
+StructuredBuffer<Entry> uEntries;
+uint uEntryCount;
 
 float gaussian(in const float x){
     #define ONE_OVER_SQRT_2PI 0.3989422804014327
@@ -25,75 +25,22 @@ float gaussian(in const float x, in const float stddev){
     return gaussian(x * inv_stddev) * inv_stddev;
 }
 
-float heat_from_edit(in const float3 world, in const EditEntry edit) {
-    return edit.heat * gaussian(distance(world, edit.center), edit.stddev);
+float heat_from_entry(in const float3 world, in const Entry entry) {
+    return entry.heat * gaussian(distance(world, entry.center), entry.stddev);
 }
 
-
-/* float hash(float p)
-{
-    p = frac(p*0.011);
-    p *= p+7.5;
-    p *= p+p;
-    return frac(p);
-}
-
-float hash(float2 p)
-{
-    float3 p3 = frac(((float3)p.xyx)*0.13);
-    p3 += dot(p3, p3.yzx+3.333);
-    return frac((p3.x+p3.y)*p3.z);
-}
-
-float noise(float x)
-{
-    float i = floor(x);
-    float f = frac(x);
-    float u = f*f*(3.-2.*f);
-    return lerp(hash(i), hash(i+1.), u);
-}
-
-float noise(float2 x)
-{
-    float2 i = floor(x);
-    float2 f = frac(x);
-    float a = hash(i);
-    float b = hash(i+float2(1., 0.));
-    float c = hash(i+float2(0., 1.));
-    float d = hash(i+float2(1., 1.));
-    float2 u = f*f*(3.-2.*f);
-    return lerp(a, b, u.x)+(c-a)*u.y*(1.-u.x)+(d-b)*u.x*u.y;
-}
-
-float noise(float3 x)
-{
-    const float3 step = float3(110, 241, 171);
-    float3 i = floor(x);
-    float3 f = frac(x);
-    float n = dot(i, step);
-    float3 u = f*f*(3.-2.*f);
-    return lerp(lerp(lerp(hash(n+dot(step, float3(0, 0, 0))), hash(n+dot(step, float3(1, 0, 0))), u.x), lerp(hash(n+dot(step, float3(0, 1, 0))), hash(n+dot(step, float3(1, 1, 0))), u.x), u.y), lerp(lerp(hash(n+dot(step, float3(0, 0, 1))), hash(n+dot(step, float3(1, 0, 1))), u.x), lerp(hash(n+dot(step, float3(0, 1, 1))), hash(n+dot(step, float3(1, 1, 1))), u.x), u.y), u.z);
-} */
-
-SR_DEF_SHARED_BUFFER(EditEntry, Edits, 64);
+SR_DEF_SHARED_BUFFER(Entry, Entries, 64);
 
 [numthreads(4, 4, 4)]
-void Edit(uint3 cell : SV_DispatchThreadID, uint group_idx : SV_GroupIndex)
+void Update(uint3 cell : SV_DispatchThreadID, uint group_idx : SV_GroupIndex)
 {
     float heat = 0;
     float3 world = GRID_CELL2WORLD(FLT_CENTER, cell);
     
-    // For Debug
-    /* if (GRID_CELL_IN_GRID_UINT(cell)) {
-        // uTexture_RW[cell] += max(1.0 - length(world) / 16.0, 0.0);
-        uTexture_RW[cell] = gaussian(world.y, 1.0) * 100;// + noise(world / 10.0) * 50;
-    } 
-    return; */ 
-    
-    #define LOAD_EDIT(X) uEdits[X]
-    #define REDUCE_EDIT(E) heat += heat_from_edit(world, E)
-    SR_REDUCE(EditEntry, Edits, 64, group_idx, 0, uEditCount, LOAD_EDIT, REDUCE_EDIT);
+    #define LOAD_EDIT(X) uEntries[X]
+    #define REDUCE_EDIT(E) heat = max(heat, heat_from_entry(world, E))
+    SR_REDUCE(Entry, Entries, 64, group_idx, 0, uEntryCount, LOAD_EDIT, REDUCE_EDIT);
     
     if (GRID_CELL_IN_GRID_UINT(cell))
-        uTexture_RW[cell] += heat;
+        uTexture_RW[cell] = heat;
 }

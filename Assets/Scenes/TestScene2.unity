@@ -187,61 +187,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &550548546
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 550548548}
-  - component: {fileID: 550548547}
-  m_Layer: 0
-  m_Name: TestSmokeSystem
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &550548547
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 550548546}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd62ec50f93fcd34db5a2be9d891a643, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NUM_TRACER: 10000
-  vortex_particle_configs:
-  - pos: {x: 1, y: 0.5, z: 0}
-    vor: {x: 0, y: 0, z: -10}
-  - pos: {x: -1, y: 0.5, z: 0}
-    vor: {x: 0, y: 0, z: 10}
-  - pos: {x: 0, y: 0.5, z: -1}
-    vor: {x: -10, y: 0, z: 0}
-  - pos: {x: 0, y: 0.5, z: 1}
-    vor: {x: 10, y: 0, z: 0}
-  _smokeSystem: {fileID: 2005683826}
---- !u!4 &550548548
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 550548546}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -652,6 +597,52 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 09eaa5f468d1a494e849f81179e78929, type: 2}
+--- !u!1 &1090933099
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1090933100}
+  - component: {fileID: 1090933101}
+  m_Layer: 0
+  m_Name: TestPerformance
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1090933100
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090933099}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1090933101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090933099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa76a1acc1977868a9e16c1defd18a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmokeSystem: {fileID: 2005683826}
+  Count: 100
 --- !u!1 &1560767384
 GameObject:
   m_ObjectHideFlags: 0
@@ -685,7 +676,7 @@ MonoBehaviour:
   Heat: 100
   HeatStddev: 6
   VortexSpawnRadius: 0.25
-  VortexSpawnTime: 0.01
+  VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.5
   TracerSpawnTime: 0.001
   MinVorticity: 3
@@ -740,7 +731,7 @@ MonoBehaviour:
   Heat: 50
   HeatStddev: 4
   VortexSpawnRadius: 0.5
-  VortexSpawnTime: 0.01
+  VortexSpawnTime: 0.05
   TracerSpawnRadius: 1
   TracerSpawnTime: 0.001
   MinVorticity: 5
@@ -812,14 +803,14 @@ MonoBehaviour:
   TimeScale: 1
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
-  MaxVortexParticleCount: 4096
+  MaxVortexParticleCount: 65536
   MaxVortexEmitCount: 512
   MaxTracerParticleCount: 131072
   MaxTracerEmitCount: 8192
   ParticleMaterial: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
   HeatFieldShader: {fileID: 7200000, guid: 2093a7ddb71a221eda939fd4db958a2e, type: 3}
   HeatFieldMaxGridSize: 32
-  HeatFieldMaxEditCount: 1024
+  HeatFieldMaxEntryCount: 1024
   Epsilon: 0.02
   HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807
@@ -831,6 +822,6 @@ SceneRoots:
   - {fileID: 2005683822}
   - {fileID: 823536081}
   - {fileID: 258623131}
-  - {fileID: 550548548}
   - {fileID: 1682061160}
   - {fileID: 1560767386}
+  - {fileID: 1090933100}
