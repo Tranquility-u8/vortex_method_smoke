@@ -9,6 +9,7 @@
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
 #include "Grid.cginc"
+#include "Command.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
@@ -26,7 +27,7 @@ RWStructuredBuffer<uint> uParticleCount_RW;
 StructuredBuffer<uint> uParticleCount;
 uint uMaxParticleCount;
 
-RWStructuredBuffer<uint> uSimulateCommand_RW;
+RWStructuredBuffer<IndirectDispatchCmd> uSimulateCommand_RW;
 
 float uDeltaTime;
 
@@ -42,9 +43,10 @@ void Emit(uint3 id : SV_DispatchThreadID) {
 
 [numthreads(1, 1, 1)]
 void SimulateDispatch() {
-    uSimulateCommand_RW[0] = (PC_COUNT(SRC) + GROUP_SIZE_X - 1) / GROUP_SIZE_X;
-    uSimulateCommand_RW[1] = 1;
-    uSimulateCommand_RW[2] = 1;
+    IndirectDispatchCmd cmd;
+    cmd.x = (PC_COUNT(SRC) + GROUP_SIZE_X - 1) / GROUP_SIZE_X;
+    cmd.y = cmd.z = 1;
+    uSimulateCommand_RW[0] = cmd;
     PC_COUNT(REF_DST) = 0; 
 }
 

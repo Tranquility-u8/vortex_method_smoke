@@ -41,7 +41,7 @@ namespace GPUSmoke
         }
 
         public void OnDestroy() {
-            SmokeSystem.HeatField.RemoveEntry(_heatEntryID);
+            SmokeSystem?.HeatField?.RemoveEntry(_heatEntryID);
         }
 
         private void MaintainHeat()

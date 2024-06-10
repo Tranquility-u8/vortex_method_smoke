@@ -81,7 +81,7 @@ namespace GPUSmoke
             _particleBuffer = new ComputeBuffer(_maxParticleCount * 2, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
             _emitBuffer = new ComputeBuffer(_maxEmitCount, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
             _countBuffer = new ComputeBuffer(2, sizeof(uint), ComputeBufferType.Structured);
-            _simulateCommandBuffer = new ComputeBuffer(3, sizeof(uint), ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
+            _simulateCommandBuffer = new ComputeBuffer(1, sizeof(uint) * 3, ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
 
             uint[] zeros = new uint[2];
             _countBuffer.SetData(zeros);

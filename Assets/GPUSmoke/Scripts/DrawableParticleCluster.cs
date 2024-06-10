@@ -17,7 +17,7 @@ namespace GPUSmoke
         public DrawableParticleCluster(Material material, ComputeShader shader, int max_particle_count, int max_emit_count)
             : base(shader, max_particle_count, max_emit_count)
         {
-            _drawCommandBuffer = new ComputeBuffer(5, sizeof(uint), ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
+            _drawCommandBuffer = new ComputeBuffer(1, sizeof(uint) * 5, ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
             _drawDispatchKernel = Shader.FindKernel("DrawDispatch");
             _material = material;
             Shader.SetBuffer(_drawDispatchKernel, "uDrawCommand_RW", _drawCommandBuffer);
