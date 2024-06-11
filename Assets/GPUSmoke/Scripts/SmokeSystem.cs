@@ -51,10 +51,16 @@ namespace GPUSmoke
                 heat_buoyancy_factor = HeatBuoyancyFactor
             };
             _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEntryCount);
-            _vortexCluster = new(VortexComputeShader, _heatField, vm_config, MaxVortexParticleCount);
-            _tracerCluster = new(TracerComputeShader, _heatField, vm_config, _vortexCluster, MaxTracerParticleCount);
+            _vortexCluster = new(VortexComputeShader, vm_config, MaxVortexParticleCount);
+            _tracerCluster = new(TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount);
             _vortexHashGrid = new(GPUSortingComputeShader, VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
             _tracerDrawer = new(ParticleMaterial, _tracerCluster, Bounds);
+            
+            _heatField.SetShaderProperty(_vortexCluster, "Heat");
+            _heatField.SetShaderProperty(_tracerCluster, "Heat");
+            
+            _vortexHashGrid.SetShaderProperty(_vortexCluster, "Hash");
+            _vortexHashGrid.SetShaderProperty(_tracerCluster, "Hash");
         }
 
         void OnDisable()
@@ -91,7 +97,7 @@ namespace GPUSmoke
             _tracerCluster.Simulate(_flip, vortex_flip, vortex_count, time_step, (bool flip, int count) => {
                 _tracerDrawer.Draw(flip, count);
             });
-
+            
             _flip = !_flip;
         }
         

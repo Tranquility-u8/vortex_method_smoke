@@ -4,6 +4,7 @@
 #define GROUP_SIZE_X 128
 
 #include "ParticleCluster.cginc"
+#include "ParticleHashGrid.cginc"
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
 #include "Grid.cginc"
@@ -11,6 +12,9 @@
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
 SamplerState sampler_uHeatTexture;
+
+_PHG_DEF_UNIFORM(Hash);
+_PHG_DEF_BUFFER(Hash);
 
 _VM_DEF_UNIFORM(VM);
 _VM_DEF_FUNC(VM);
@@ -37,13 +41,10 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     TracerParticle p = PC_GET(SAFE, src_idx);
     p.life -= uDeltaTime;
 
-    float3 v = float3(0, 0, 0);
-    #define LOAD_POS_VOR(X) pos_vor_from_vortex_particle(uVortexParticles[X])
-    #define REDUCE_POS_VOR(P) v += velocity_from_pos_vor(p.pos, P)
-    uint s = _PC_IDX(Vortex, 0), t = s + _PC_COUNT(Vortex);
-    SR_REDUCE(PosVor, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
-    
-    v.y += buoyancy_velocity_from_pos(p.pos);
+    float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
+    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[P_ID]));
+    _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
+
     p.pos += v * uDeltaTime;
 
     /* if (p.pos.y <= 10)

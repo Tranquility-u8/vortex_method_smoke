@@ -1,3 +1,6 @@
+#ifndef SHARED_REDUCE_CGINC
+#define SHARED_REDUCE_CGINC
+
 #define __SR_R1(NAME, S, X) S(s##NAME[X]);
 #define __SR_R2(NAME, S, X) __SR_R1(NAME, S, X); __SR_R1(NAME, S, X + 1);
 #define __SR_R4(NAME, S, X) __SR_R2(NAME, S, X); __SR_R2(NAME, S, X + 2);
@@ -28,3 +31,5 @@
             REDUCE(s##NAME[__sr_i]); \
     } \
 } while(false)
+
+#endif

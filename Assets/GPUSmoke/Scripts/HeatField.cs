@@ -21,7 +21,6 @@ namespace GPUSmoke
         private RenderTexture _texture;
         private ComputeBuffer _entryBuffer;
 
-        public RenderTexture Texture { get => _texture; }
 
         public HeatField(ComputeShader shader, Bounds bounds, int max_grid_size, int max_entry_count)
             : base(bounds, max_grid_size)
@@ -51,6 +50,15 @@ namespace GPUSmoke
             SetShaderUniform(_shader);
             _shader.SetTexture(_updateKernel, "uTexture_RW", _texture);
             _shader.SetBuffer(_updateKernel, "uEntries", _entryBuffer);
+        }
+        
+        public void SetShaderTexture(ComputeShader shader, int kernel, string prefix = "") {
+            shader.SetTexture(kernel, "u" + prefix + "Texture", _texture);
+        }
+
+        public void SetShaderProperty<W_, T_>(ParticleCluster<W_, T_> cluster, string prefix = "") where W_ : unmanaged where T_ : IStruct<W_>, new(){
+            SetShaderUniform(cluster.Shader, prefix);
+            SetShaderTexture(cluster.Shader, cluster.SimulateKernel, prefix);            
         }
 
         public HeatFieldEntryID AddEntry(HeatFieldEntry entry)

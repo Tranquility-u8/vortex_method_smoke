@@ -4,13 +4,16 @@
 #define GROUP_SIZE_X 128
 
 #include "ParticleCluster.cginc"
+#include "ParticleHashGrid.cginc"
 #include "VortexMethod.cginc"
-#include "SharedReduce.cginc"
 #include "Grid.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
 SamplerState sampler_uHeatTexture;
+
+_PHG_DEF_UNIFORM(Hash);
+_PHG_DEF_BUFFER(Hash);
 
 _VM_DEF_UNIFORM(VM);
 _VM_DEF_FUNC(VM);
@@ -20,11 +23,6 @@ PC_DEF_BUFFER(VortexParticle)
 PC_DEF_BUFFER_RW(VortexParticle)
 
 float uDeltaTime;
-
-/* float heat(in const float3 pos) {
-    // return 100 - pos.y;
-    return max(0.0, 1.0 - length(pos) / 16.0);
-} */
 
 float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
     float3 uvw = _GRID_WORLD2UVW(Heat, pos);
@@ -38,14 +36,6 @@ float2 buoyancy_curl_xz_from_pos(in const float3 pos) {
             uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0] + uvw_dxz[0] * 0.5, uvw[1], uvw[2]), 0) - 
             uHeatTexture.SampleLevel(sampler_uHeatTexture, float3(uvw[0] - uvw_dxz[0] * 0.5, uvw[1], uvw[2]), 0)
         ) / world_d;
-    /* float d_fy_dz = (
-            heat(float3(pos[0], pos[1], pos[2] + 0.5)) - 
-            heat(float3(pos[0], pos[1], pos[2] - 0.5))
-        );
-    float d_fy_dx = (
-            heat(float3(pos[0] + 0.5, pos[1], pos[2])) - 
-            heat(float3(pos[0] - 0.5, pos[1], pos[2]))
-        ); */
     return float2(d_fy_dz, d_fy_dx) * _VM_HEAT_BUOYANCY_FACTOR(VM);
 }
 
@@ -54,8 +44,6 @@ float buoyancy_velocity_from_pos(in const float3 pos) {
     return uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0) * _VM_HEAT_BUOYANCY_FACTOR(VM);
 }
 
-SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);
-
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     uint src_idx = id.x, src_count = PC_COUNT;
@@ -63,18 +51,15 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     p.life -= uDeltaTime;
 
     // Update Vortex
-    /* float2 vor_dxz = buoyancy_curl_xz_from_pos(p.pos);
+    float2 vor_dxz = buoyancy_curl_xz_from_pos(p.pos);
     p.vor.x += vor_dxz[0] * uDeltaTime;
-    p.vor.z += vor_dxz[1] * uDeltaTime; */
+    p.vor.z += vor_dxz[1] * uDeltaTime;
 
     // Update Position
-    float3 v = float3(0, 0, 0);
-    #define LOAD_POS_VOR(X) pos_vor_from_vortex_particle(uParticles[X])
-    #define REDUCE_POS_VOR(P) v += velocity_from_pos_vor(p.pos, P)
-    uint s = PC_IDX(0), t = s + src_count;
-    SR_REDUCE(PosVor, PosVor, GROUP_SIZE_X, group_idx, s, t, LOAD_POS_VOR, REDUCE_POS_VOR);
+    float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
+    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uParticles[P_ID]));
+    _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
 
-    v.y += buoyancy_velocity_from_pos(p.pos);
     p.pos += v * uDeltaTime;
     /* if (p.pos.y <= 10)
         v.y += buoyancy_velocity_from_pos(p.pos);

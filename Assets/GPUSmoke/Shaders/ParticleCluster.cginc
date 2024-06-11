@@ -1,3 +1,6 @@
+#ifndef PARTICLE_CLUSTER_CGINC
+#define PARTICLE_CLUSTER_CGINC
+
 #define __PC_MAX_COUNT(PREFIX) uint(u##PREFIX##MaxCount)
 #define __PC_COUNT(PREFIX) uint(u##PREFIX##Count)
 #define __PC_PUSH_COUNT(PREFIX) u##PREFIX##PushCount_RW[0]
@@ -46,3 +49,5 @@
 #define PC_COUNT _PC_COUNT()
 #define PC_PUSH(F, P) _PC_PUSH(, F, P)
 #define PC_GET(F, X) _PC_GET(, F, X)
+
+#endif

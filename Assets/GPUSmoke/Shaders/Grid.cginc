@@ -1,3 +1,6 @@
+#ifndef GRID_CGINC
+#define GRID_CGINC
+
 #define __GRID_BOUND_MIN(PREFIX) float3(u##PREFIX##BoundMin)
 #define __GRID_SIZE(PREFIX) int3(u##PREFIX##GridSize)
 #define __GRID_USIZE(PREFIX) uint3(u##PREFIX##GridSize)
@@ -68,3 +71,5 @@
 #define GRID_CELL_IN_GRID_UINT(CELL) _GRID_CELL_IN_GRID_UINT(, CELL)
 #define GRID_CELL2ID(CELL) _GRID_CELL2ID(, CELL)
 #define GRID_CELL_COUNT _GRID_CELL_COUNT()
+
+#endif

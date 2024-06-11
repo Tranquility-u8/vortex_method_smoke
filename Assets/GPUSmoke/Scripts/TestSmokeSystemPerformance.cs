@@ -22,7 +22,7 @@ namespace GPUSmoke
                 );
                 var ss = obj.AddComponent<SmokeSource>();
                 ss.SmokeSystem = SmokeSystem;
-                ss.Heat = 100;
+                ss.Heat = 50;
                 ss.HeatStddev = 2;
                 ss.VortexSpawnTime = 0.05f;
                 ss.TracerSpawnTime = 0.001f;

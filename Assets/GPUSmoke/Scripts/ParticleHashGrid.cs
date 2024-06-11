@@ -55,7 +55,12 @@ namespace GPUSmoke
             shader.SetBuffer(kernel, "u" + prefix + "Ranges", _rangeBuffer);
             shader.SetBuffer(kernel, "u" + prefix + "ParticleIDs", _particleIdBuffer);
         }
-
+        
+        public void SetShaderProperty<W_, T_>(ParticleCluster<W_, T_> cluster, string prefix = "") where W_ : unmanaged where T_ : IStruct<W_>, new(){
+            SetShaderUniform(cluster.Shader, prefix);
+            SetShaderBuffer(cluster.Shader, cluster.SimulateKernel, prefix);
+        }
+        
         public void Generate(bool flip, int count)
         {
             _rangeBuffer.SetData(_rangeBufferClearData);

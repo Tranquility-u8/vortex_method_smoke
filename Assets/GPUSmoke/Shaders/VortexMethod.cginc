@@ -1,3 +1,6 @@
+#ifndef VORTEX_METHOD_CGINC
+#define VORTEX_METHOD_CGINC
+
 struct VortexParticle {
     float3 pos, vor; 
     float life;
@@ -31,3 +34,5 @@ float3 velocity_from_pos_vor(in const float3 pi_pos, in const PosVor pj_pos_vor)
     factor = isnan(factor) || isinf(factor) ? 0 : factor; \
     return cross(pj_pos_vor.vor, d) * factor; \
 }
+
+#endif
