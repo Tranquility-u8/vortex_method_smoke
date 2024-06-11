@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "asdf.b0nes.gpu_sorting": {
+      "version": "https://github.com/b0nes164/GPUSorting.git?path=/GPUSortingUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "60ba86480195339156b27e6c663428765a26614b"
+    },
     "com.unity.burst": {
       "version": "1.8.12",
       "depth": 1,

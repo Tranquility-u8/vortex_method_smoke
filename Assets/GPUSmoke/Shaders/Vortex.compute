@@ -64,9 +64,9 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     p.life -= uDeltaTime;
 
     // Update Vortex
-    float2 vor_dxz = buoyancy_curl_xz_from_pos(p.pos);
+    /* float2 vor_dxz = buoyancy_curl_xz_from_pos(p.pos);
     p.vor.x += vor_dxz[0] * uDeltaTime;
-    p.vor.z += vor_dxz[1] * uDeltaTime;
+    p.vor.z += vor_dxz[1] * uDeltaTime; */
 
     // Update Position
     float3 v = float3(0, 0, 0);
