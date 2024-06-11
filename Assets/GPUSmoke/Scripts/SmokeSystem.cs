@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GPUSmoke
 {
@@ -10,13 +11,15 @@ namespace GPUSmoke
     {
         public Bounds Bounds;
         public float TimeScale = 1.0f;
+        
+        [Header("Draws")]
+        public List<DrawConfig> Draws;
 
         [Header("Particle")]
         public ComputeShader VortexComputeShader;
         public ComputeShader TracerComputeShader;
         public int MaxVortexParticleCount;
         public int MaxTracerParticleCount;
-        public List<Material> ParticleMaterials;
         
         [Header("Heat Field")]
         public ComputeShader HeatFieldShader;
@@ -55,7 +58,7 @@ namespace GPUSmoke
             _vortexCluster = new(VortexComputeShader, vm_config, MaxVortexParticleCount);
             _tracerCluster = new(TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount);
             _vortexHashGrid = new(DeviceRadixSortComputeShader, OneSweepSortComputeShader, VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
-            _tracerDrawer = new(ParticleMaterials, _tracerCluster, Bounds);
+            _tracerDrawer = new(Draws, _tracerCluster, Bounds);
             
             _heatField.SetShaderProperty(_vortexCluster, "Heat");
             _heatField.SetShaderProperty(_tracerCluster, "Heat");

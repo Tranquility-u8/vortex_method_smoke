@@ -719,7 +719,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1090933100
 Transform:
   m_ObjectHideFlags: 0
@@ -820,7 +820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1560767385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -875,7 +875,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1682061159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -962,12 +962,16 @@ MonoBehaviour:
     m_Center: {x: 0, y: 16, z: 0}
     m_Extent: {x: 16, y: 16, z: 16}
   TimeScale: 1
+  Draws:
+  - Material: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
+    Camera: {fileID: 0}
+    CastShadows: 0
+    ReceiveShadows: 1
+    Layer: 0
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 65536
   MaxTracerParticleCount: 131072
-  ParticleMaterials:
-  - {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
   HeatFieldShader: {fileID: 7200000, guid: 2093a7ddb71a221eda939fd4db958a2e, type: 3}
   HeatFieldMaxGridSize: 32
   HeatFieldMaxEntryCount: 1024
@@ -975,7 +979,7 @@ MonoBehaviour:
   DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
   OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
   VortexHashGridMaxGridSize: 32
-  Epsilon: 0.01
+  Epsilon: 0.1
   HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

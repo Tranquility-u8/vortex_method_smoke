@@ -50,20 +50,20 @@ namespace GPUSmoke
         public void SetShaderBuffer(ComputeShader shader, int kernel, string prefix = "") {
             shader.SetBuffer(kernel, "u" + prefix + "Particles", _particleBuffer);
         }
-        public void SetMaterialBuffer(Material shader, string prefix = "") {
+        public void SetMaterialBuffer(MaterialPropertyBlock shader, string prefix = "") {
             shader.SetBuffer("u" + prefix + "Particles", _particleBuffer);
         }
         public void SetShaderStaticUniform(ComputeShader shader, string prefix = "") {
             shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
         }
-        public void SetMaterialStaticUniform(Material shader, string prefix = "") {
+        public void SetMaterialStaticUniform(MaterialPropertyBlock shader, string prefix = "") {
             shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
         }
         public static void SetShaderDynamicUniform(ComputeShader shader, bool flip, int count, string prefix = "") {
             shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
             shader.SetInt("u" + prefix + "Count", count);
         }
-        public static void SetMaterialDynamicUniform(Material shader, bool flip, int count, string prefix = "") {
+        public static void SetMaterialDynamicUniform(MaterialPropertyBlock shader, bool flip, int count, string prefix = "") {
             shader.SetInt("u" + prefix + "Count", count);
             shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
         }
