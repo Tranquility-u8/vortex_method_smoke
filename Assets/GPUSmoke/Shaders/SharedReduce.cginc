@@ -6,6 +6,8 @@
 #define __SR_R32(NAME, S, X) __SR_R16(NAME, S, X); __SR_R16(NAME, S, X + 16);
 #define __SR_R64(NAME, S, X) __SR_R32(NAME, S, X); __SR_R32(NAME, S, X + 32);
 #define __SR_R128(NAME, S, X) __SR_R64(NAME, S, X); __SR_R64(NAME, S, X + 64);
+#define __SR_R256(NAME, S, X) __SR_R128(NAME, S, X); __SR_R128(NAME, S, X + 128);
+#define __SR_R512(NAME, S, X) __SR_R256(NAME, S, X); __SR_R256(NAME, S, X + 256);
 #define __SR_FIXED_REDUCE(NAME, GROUP_SIZE, S) __SR_R##GROUP_SIZE(NAME, S, 0)
 
 #define SR_DEF_SHARED_BUFFER(TYPE, NAME, GROUP_SIZE) groupshared TYPE s##NAME[GROUP_SIZE]

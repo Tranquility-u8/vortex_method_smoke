@@ -88,13 +88,18 @@ namespace GPUSmoke
                 count_data[0] = dst_count;
                 Emits.Clear();
                 _pushCountBuffer.SetData(count_data);
-                _particleBuffer.SetData(dst_data, 0, src_flip ? 0 : _maxParticleCount * StructUtil<W, T>.WordCount, dst_count * StructUtil<W, T>.WordCount);
+                _particleBuffer.SetData(
+                    dst_data, 
+                    0, 
+                    src_flip ? 0 : _maxParticleCount * StructUtil<W, T>.WordCount, 
+                    dst_count * StructUtil<W, T>.WordCount
+                );
             }
+
+            on_simulate(src_flip, src_count);
 
             if (src_count > 0)
             {
-                on_simulate(src_flip, src_count);
-
                 ShaderSetDynamicUniform(_shader, src_flip, src_count);
                 _shader.SetFloat("uDeltaTime", delta_time);
                 _shader.Dispatch(_simulateKernel, (int)((src_count + _simulateKernelGroupX - 1) / _simulateKernelGroupX), 1, 1);

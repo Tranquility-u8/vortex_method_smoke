@@ -78,11 +78,13 @@ namespace GPUSmoke
             
             _heatField.Update();
 
+            bool vortex_flip = _flip;
             int vortex_count = 0;
             _vortexCluster.Simulate(_flip, Time.deltaTime * TimeScale, (bool flip, int count) => {
+                vortex_flip = flip;
                 vortex_count = count;
             });
-            _tracerCluster.Simulate(_flip, _flip, vortex_count, Time.deltaTime * TimeScale, (bool flip, int count) => {
+            _tracerCluster.Simulate(_flip, vortex_flip, vortex_count, Time.deltaTime * TimeScale, (bool flip, int count) => {
                 _tracerDrawer.Draw(flip, count);
             });
 

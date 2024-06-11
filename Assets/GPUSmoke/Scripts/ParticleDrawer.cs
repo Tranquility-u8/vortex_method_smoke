@@ -14,6 +14,7 @@ namespace GPUSmoke
         public ParticleDrawer(Material material, ParticleCluster<W, T> cluster, Bounds bounds)
         {
             _material = material;
+            _bounds = bounds;
             cluster.ShaderSetBuffer(_material);
             cluster.ShaderSetStaticUniform(_material);
         }
