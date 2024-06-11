@@ -19,7 +19,8 @@ Shader "Unlit/Smoke"
 			#include "UnityCG.cginc"
 			#include "Particle.cginc"
 			#include "ParticleCluster.cginc"
-		
+			#include "AutoLight.cginc"
+
 			StructuredBuffer<TracerParticle> uParticles;
 			uint uMaxParticleCount, uFlip;
 			
@@ -35,6 +36,7 @@ Shader "Unlit/Smoke"
 			{
 				float4 pos : SV_POSITION;
 				float2 texcoord : TEXCOORD0;
+				float3 normal : TEXCOORD1;
 			};
 
 			V2G vert(uint id : SV_VertexID)
@@ -51,34 +53,47 @@ Shader "Unlit/Smoke"
 				float4 c = p[0].pos;
 				float4 dx = UNITY_MATRIX_P[0] * _Radius;
 				float4 dy = UNITY_MATRIX_P[1] * _Radius;
-				
+				float3 normal = 
+
 				G2F o;
 
 				o.pos = c + dx + dy;
 				o.texcoord = float2(0, 0);
+				o.normal = normal;
 				tri.Append(o);
 
 				o.pos = c + dx - dy;
 				o.texcoord = float2(0, 1);
+				o.normal = normal;
 				tri.Append(o);
 
 				o.pos = c - dx + dy;
-				o.texcoord = float2(1, 0);
+				o.texcoord = normal;
+				o.normal = normal;
 				tri.Append(o);
 
 				o.pos = c - dx - dy;
 				o.texcoord = float2(1, 1);
+				o.normal = normal;
 				tri.Append(o);
+
 			}
 
 			float4 frag(G2F i) : COLOR
 			{
-				return _SpriteTex.Sample(sampler_SpriteTex, i.texcoord);
+				float4 color = _SpriteTex.Sample(sampler_SpriteTex, i.texcoord);
+				LIGHTING_COORDS(0,1)
+				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+				float ndotl = max(0, dot(i.normal, lightDir));
+				float4 litColor = color * ndotl;
+				return litColor * UNITY_LIGHTMODEL_AMBIENT;
 			}
 
 			ENDCG
 
 		}
+
+		UsePass "Universal Render Pipeline/Lit/ShadowCaster"
 	}
 	Fallback Off
 }
