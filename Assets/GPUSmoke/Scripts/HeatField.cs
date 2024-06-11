@@ -96,13 +96,8 @@ namespace GPUSmoke
 
         public void Destroy()
         {
-            if (_entryBuffer != null)
-            {
-                _entryBuffer.Release();
-                _entryBuffer = null;
-                _texture.Release();
-                _texture = null;
-            }
+            DestroyUtil.Release(ref _entryBuffer);
+            DestroyUtil.Release(ref _texture);
         }
     }
 

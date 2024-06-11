@@ -38,38 +38,32 @@ namespace GPUSmoke
             _shader.SetBuffer(_simulateKernel, "uParticles", _particleBuffer);
             _shader.SetBuffer(_simulateKernel, "uParticles_RW", _particleBuffer);
             _shader.SetBuffer(_simulateKernel, "uPushCount_RW", _pushCountBuffer);
-            ShaderSetStaticUniform(_shader);
+            SetShaderStaticUniform(_shader);
         }
 
         public virtual void Destroy()
         {
-            if (_particleBuffer != null)
-            {
-                _particleBuffer.Release();
-                _pushCountBuffer.Release();
-
-                _particleBuffer = null;
-                _pushCountBuffer = null;
-            }
+            DestroyUtil.Release(ref _particleBuffer);
+            DestroyUtil.Release(ref _pushCountBuffer);
         }
         
-        public void ShaderSetBuffer(ComputeShader shader, int kernel, string prefix = "") {
+        public void SetShaderBuffer(ComputeShader shader, int kernel, string prefix = "") {
             shader.SetBuffer(kernel, "u" + prefix + "Particles", _particleBuffer);
         }
-        public void ShaderSetBuffer(Material shader, string prefix = "") {
+        public void SetMaterialBuffer(Material shader, string prefix = "") {
             shader.SetBuffer("u" + prefix + "Particles", _particleBuffer);
         }
-        public void ShaderSetStaticUniform(ComputeShader shader, string prefix = "") {
+        public void SetShaderStaticUniform(ComputeShader shader, string prefix = "") {
             shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
         }
-        public void ShaderSetStaticUniform(Material shader, string prefix = "") {
+        public void SetMaterialStaticUniform(Material shader, string prefix = "") {
             shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
         }
-        public static void ShaderSetDynamicUniform(ComputeShader shader, bool flip, int count, string prefix = "") {
+        public static void SetShaderDynamicUniform(ComputeShader shader, bool flip, int count, string prefix = "") {
             shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
             shader.SetInt("u" + prefix + "Count", count);
         }
-        public static void ShaderSetDynamicUniform(Material shader, bool flip, int count, string prefix = "") {
+        public static void SetMaterialDynamicUniform(Material shader, bool flip, int count, string prefix = "") {
             shader.SetInt("u" + prefix + "Count", count);
             shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
         }
@@ -101,7 +95,7 @@ namespace GPUSmoke
 
             if (src_count > 0)
             {
-                ShaderSetDynamicUniform(_shader, src_flip, src_count);
+                SetShaderDynamicUniform(_shader, src_flip, src_count);
                 _shader.SetFloat("uDeltaTime", delta_time);
                 _shader.Dispatch(_simulateKernel, (int)((src_count + _simulateKernelGroupX - 1) / _simulateKernelGroupX), 1, 1);
             }

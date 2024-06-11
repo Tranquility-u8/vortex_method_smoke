@@ -25,6 +25,7 @@ namespace GPUSmoke
 
         [Header("Vortex Hash Grid")]
         public ComputeShader VortexHashGridComputeShader;
+        public ComputeShader GPUSortingComputeShader;
         public int VortexHashGridMaxGridSize;
 
         [Header("Vortex Method")]
@@ -52,7 +53,7 @@ namespace GPUSmoke
             _heatField = new(HeatFieldShader, Bounds, HeatFieldMaxGridSize, HeatFieldMaxEntryCount);
             _vortexCluster = new(VortexComputeShader, _heatField, vm_config, MaxVortexParticleCount);
             _tracerCluster = new(TracerComputeShader, _heatField, vm_config, _vortexCluster, MaxTracerParticleCount);
-            _vortexHashGrid = new(VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
+            _vortexHashGrid = new(GPUSortingComputeShader, VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
             _tracerDrawer = new(ParticleMaterial, _tracerCluster, Bounds);
         }
 
@@ -85,6 +86,7 @@ namespace GPUSmoke
             _vortexCluster.Simulate(_flip, time_step, (bool flip, int count) => {
                 vortex_flip = flip;
                 vortex_count = count;
+                _vortexHashGrid.Generate(flip, count);
             });
             _tracerCluster.Simulate(_flip, vortex_flip, vortex_count, time_step, (bool flip, int count) => {
                 _tracerDrawer.Draw(flip, count);

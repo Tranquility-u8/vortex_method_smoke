@@ -15,13 +15,13 @@ namespace GPUSmoke
         {
             _material = material;
             _bounds = bounds;
-            cluster.ShaderSetBuffer(_material);
-            cluster.ShaderSetStaticUniform(_material);
+            cluster.SetMaterialBuffer(_material);
+            cluster.SetMaterialStaticUniform(_material);
         }
 
         public void Draw(bool flip, int count)
         {
-            ParticleCluster<W, T>.ShaderSetDynamicUniform(_material, flip, count);
+            ParticleCluster<W, T>.SetMaterialDynamicUniform(_material, flip, count);
             Graphics.DrawProcedural(_material, _bounds, MeshTopology.Triangles, count * 6);
         }
     }
