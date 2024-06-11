@@ -1,10 +1,9 @@
-#pragma kernel SortDispatch
+#pragma kernel SortPrepare
 #pragma kernel Sort512
 #pragma kernel SortInner512
 #pragma kernel SortStep
 
 #include "ParticleCluster.cginc"
-#include "Command.cginc"
 #include "Grid.cginc"
 
 // Sort on cell_id
@@ -14,13 +13,12 @@ struct SortEntry {
 
 GRID_DEF_UNIFORM;
 
-RWStructuredBuffer<IndirectDispatchCmd> uSortCommand_RW;
-StructuredBuffer<SortEntry> uSortEntries;
-RWStructuredBuffer<SortEntry> uSortEntries_RW;
+StructuredBuffer<SortEntry> uEntries;
+RWStructuredBuffer<SortEntry> uEntries_RW;
 RWStructuredBuffer<uint> uGridOffsets_RW;
 
 [numthreads(64, 1, 1)]
-void SortDispatch(uint3 id : SV_DispatchThreadID)
+void SortPrepare(uint3 id : SV_DispatchThreadID)
 {
 }
 

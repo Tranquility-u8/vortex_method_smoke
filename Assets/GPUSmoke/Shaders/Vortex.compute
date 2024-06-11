@@ -7,7 +7,6 @@
 #include "VortexMethod.cginc"
 #include "SharedReduce.cginc"
 #include "Grid.cginc"
-#include "Command.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
