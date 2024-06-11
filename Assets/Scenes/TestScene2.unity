@@ -810,8 +810,9 @@ MonoBehaviour:
   HeatFieldMaxGridSize: 32
   HeatFieldMaxEntryCount: 1024
   VortexHashGridComputeShader: {fileID: 7200000, guid: e1dfe32737934c24f850543710bf4029, type: 3}
-  GPUSortingComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
-  VortexHashGridMaxGridSize: 16
+  DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
+  OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
+  VortexHashGridMaxGridSize: 20
   Epsilon: 0.02
   HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807

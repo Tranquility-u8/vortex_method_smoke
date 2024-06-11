@@ -220,6 +220,36 @@ namespace GPUSorting.Runtime
             }
         }
 
+        private void DispatchBitWidth(
+            int maxBitWidth,
+            int numThreadBlocks,
+            ComputeBuffer _toSort,
+            ComputeBuffer _toSortPayload,
+            ComputeBuffer _alt,
+            ComputeBuffer _altPayload)
+        {
+            m_cs.Dispatch(m_kernelInit, 1, 1, 1);
+
+            for (int radixShift = 0; radixShift < maxBitWidth; radixShift += 8)
+            {
+                m_cs.SetInt("e_radixShift", radixShift);
+
+                m_cs.SetBuffer(m_kernelUpsweep, "b_sort", _toSort);
+                m_cs.Dispatch(m_kernelUpsweep, numThreadBlocks, 1, 1);
+
+                m_cs.Dispatch(m_kernelScan, k_radix, 1, 1);
+
+                m_cs.SetBuffer(m_kernelDownsweep, "b_sort", _toSort);
+                m_cs.SetBuffer(m_kernelDownsweep, "b_sortPayload", _toSortPayload);
+                m_cs.SetBuffer(m_kernelDownsweep, "b_alt", _alt);
+                m_cs.SetBuffer(m_kernelDownsweep, "b_altPayload", _altPayload);
+                m_cs.Dispatch(m_kernelDownsweep, numThreadBlocks, 1, 1);
+
+                (_toSort, _alt) = (_alt, _toSort);
+                (_toSortPayload, _altPayload) = (_altPayload, _toSortPayload);
+            }
+        }
+
         private void Dispatch(
             int numThreadBlocks,
             CommandBuffer _cmd,
@@ -345,6 +375,33 @@ namespace GPUSorting.Runtime
                 tempPassHistBuffer,
                 tempGlobalHistBuffer);
             Dispatch(threadBlocks, toSort, toSortPayload, tempKeyBuffer, tempPayloadBuffer);
+        }
+
+        //Pairs (Bit Width)
+        public void SortBitWidth(
+            int maxBitWidth,
+            int sortSize,
+            ComputeBuffer toSort,
+            ComputeBuffer toSortPayload,
+            ComputeBuffer tempKeyBuffer,
+            ComputeBuffer tempPayloadBuffer,
+            ComputeBuffer tempGlobalHistBuffer,
+            ComputeBuffer tempPassHistBuffer,
+            System.Type keyType,
+            System.Type payloadType,
+            bool shouldAscend)
+        {
+            AssertChecksPairs(sortSize, keyType, payloadType);
+            SetKeyTypeKeywords(keyType);
+            SetPayloadTypeKeywords(payloadType);
+            SetAscendingKeyWords(shouldAscend);
+            int threadBlocks = DivRoundUp(sortSize, k_partitionSize);
+            SetStaticRootParameters(
+                sortSize,
+                threadBlocks,
+                tempPassHistBuffer,
+                tempGlobalHistBuffer);
+            DispatchBitWidth(maxBitWidth, threadBlocks, toSort, toSortPayload, tempKeyBuffer, tempPayloadBuffer);
         }
 
         //Pairs
