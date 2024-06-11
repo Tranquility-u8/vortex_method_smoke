@@ -16,6 +16,7 @@ namespace GPUSmoke
         public Bounds Bounds { get => _bounds; }
         public Vector3Int GridSize { get => _gridSize; }
         public float CellSize { get => _cellSize; }
+        public int CellCount { get => _gridSize.x * _gridSize.y * _gridSize.z; }
 
         public Grid(Bounds bounds, int max_grid_size)
         {

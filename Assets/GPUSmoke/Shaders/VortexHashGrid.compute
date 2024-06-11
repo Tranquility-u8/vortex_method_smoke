@@ -1,0 +1,40 @@
+#pragma kernel SortDispatch
+#pragma kernel Sort512
+#pragma kernel SortInner512
+#pragma kernel SortStep
+
+#include "ParticleCluster.cginc"
+#include "Command.cginc"
+#include "Grid.cginc"
+
+// Sort on cell_id
+struct SortEntry {
+    uint particle_id, cell_id;
+};
+
+GRID_DEF_UNIFORM;
+
+RWStructuredBuffer<IndirectDispatchCmd> uSortCommand_RW;
+StructuredBuffer<SortEntry> uSortEntries;
+RWStructuredBuffer<SortEntry> uSortEntries_RW;
+RWStructuredBuffer<uint> uGridOffsets_RW;
+
+[numthreads(64, 1, 1)]
+void SortDispatch(uint3 id : SV_DispatchThreadID)
+{
+}
+
+[numthreads(256, 1, 1)]
+void Sort512(uint3 id : SV_DispatchThreadID)
+{
+}
+
+[numthreads(256, 1, 1)]
+void SortInner512(uint3 id : SV_DispatchThreadID)
+{
+}
+
+[numthreads(512, 1, 1)]
+void SortStep(uint3 id : SV_DispatchThreadID)
+{
+}

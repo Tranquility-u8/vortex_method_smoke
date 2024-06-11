@@ -25,8 +25,8 @@ Shader "Unlit/Smoke"
             #include "VortexMethod.cginc"
             #include "ParticleCluster.cginc"
         
-            StructuredBuffer<TracerParticle> uParticles;
-            uint uMaxParticleCount, uFlip;
+            PC_DEF_UNIFORM
+            PC_DEF_BUFFER(TracerParticle)
             
             float _Radius;
             Texture2D _SpriteTex;
@@ -40,7 +40,7 @@ Shader "Unlit/Smoke"
 
             V2F vert(uint id : SV_VertexID)
             {
-                float4 c = mul(UNITY_MATRIX_VP, float4(PC_GET(SRC_UNSAFE, id / 6u).pos, 1.0));
+                float4 c = mul(UNITY_MATRIX_VP, float4(PC_GET(UNSAFE, id / 6u).pos, 1.0));
                 float4 dx = UNITY_MATRIX_P[0] * _Radius;
                 float4 dy = UNITY_MATRIX_P[1] * _Radius;
 

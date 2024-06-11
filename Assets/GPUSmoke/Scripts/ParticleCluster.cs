@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
@@ -9,117 +8,97 @@ namespace GPUSmoke
     public class ParticleCluster<W, T> where W : unmanaged where T : IStruct<W>, new()
     {
         private readonly ComputeShader _shader;
-        private readonly int _emitKernel, _simulateDispatchKernel, _simulateKernel;
-        private readonly uint _emitKernelGroupX;
-        private ComputeBuffer _particleBuffer, _emitBuffer, _countBuffer, _simulateCommandBuffer;
+        private readonly int _simulateKernel;
+        private readonly uint _simulateKernelGroupX;
+        private ComputeBuffer _particleBuffer, _pushCountBuffer;
         private readonly List<T> _emits;
-        private readonly int _maxParticleCount, _maxEmitCount;
+        private readonly int _maxParticleCount;
 
         public ComputeShader Shader { get => _shader; }
-        public int EmitKernel { get => _emitKernel; }
-        public int SimulateDispatchKernel { get => _simulateDispatchKernel; }
         public int SimulateKernel { get => _simulateKernel; }
-        public ComputeBuffer ParticleBuffer { get => _particleBuffer; }
-        public ComputeBuffer CountBuffer { get => _countBuffer; }
-        public ComputeBuffer SimulateDispatchBuffer { get => _simulateCommandBuffer; }
         public int MaxParticleCount { get => _maxParticleCount; }
-        public int MaxEmitCount { get => _maxEmitCount; }
 
         public List<T> Emits { get => _emits; }
 
-        public ParticleCluster(ComputeShader shader, int max_particle_count, int max_emit_count)
+        public ParticleCluster(ComputeShader shader, int max_particle_count)
         {
             _shader = shader;
             _maxParticleCount = max_particle_count;
-            _maxEmitCount = max_emit_count;
             _emits = new List<T>();
 
-            _emitKernel = _shader.FindKernel("Emit");
-            _shader.GetKernelThreadGroupSizes(_emitKernel, out _emitKernelGroupX, out _, out _);
-            _simulateDispatchKernel = _shader.FindKernel("SimulateDispatch");
             _simulateKernel = _shader.FindKernel("Simulate");
+            _shader.GetKernelThreadGroupSizes(_simulateKernel, out _simulateKernelGroupX, out _, out _);
 
-            CreateBuffer_();
-            SetConstUniform_();
+            _particleBuffer = new ComputeBuffer(_maxParticleCount * 2, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
+            _pushCountBuffer = new ComputeBuffer(1, sizeof(uint), ComputeBufferType.Structured);
+            uint[] zeros = new uint[1];
+            _pushCountBuffer.SetData(zeros);
+
+            _shader.SetBuffer(_simulateKernel, "uParticles", _particleBuffer);
+            _shader.SetBuffer(_simulateKernel, "uParticles_RW", _particleBuffer);
+            _shader.SetBuffer(_simulateKernel, "uPushCount_RW", _pushCountBuffer);
+            ShaderSetStaticUniform(_shader);
         }
 
         public virtual void Destroy()
         {
-            DestroyBuffer_();
-        }
-
-        public void Emit(bool src_flip)
-        {
-            int emit_count = Math.Min(Emits.Count, _maxEmitCount);
-            if (emit_count == 0)
-            {
-                Emits.Clear();
-                return;
-            }
-
-            // Flatten Data
-            W[] emit_data = StructUtil<W, T>.ToWords(Emits.GetRange(0, emit_count));
-            Emits.Clear();
-
-            // Dispatch
-            _shader.SetInt("uFlip", src_flip ? 1 : 0);
-            _shader.SetInt("uEmitCount", emit_count);
-            _emitBuffer.SetData(emit_data);
-            _shader.Dispatch(_emitKernel, (emit_count + (int)_emitKernelGroupX - 1) / (int)_emitKernelGroupX, 1, 1);
-        }
-
-        public void Simulate(bool src_flip, float delta_time)
-        {
-            _shader.SetInt("uFlip", src_flip ? 1 : 0);
-            _shader.SetFloat("uDeltaTime", delta_time);
-            _shader.Dispatch(_simulateDispatchKernel, 1, 1, 1);
-            _shader.DispatchIndirect(_simulateKernel, _simulateCommandBuffer, 0);
-        }
-
-        private void CreateBuffer_()
-        {
-            _particleBuffer = new ComputeBuffer(_maxParticleCount * 2, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
-            _emitBuffer = new ComputeBuffer(_maxEmitCount, StructUtil<W, T>.ByteCount, ComputeBufferType.Structured);
-            _countBuffer = new ComputeBuffer(2, sizeof(uint), ComputeBufferType.Structured);
-            _simulateCommandBuffer = new ComputeBuffer(1, sizeof(uint) * 3, ComputeBufferType.Structured | ComputeBufferType.IndirectArguments);
-
-            uint[] zeros = new uint[2];
-            _countBuffer.SetData(zeros);
-
-            _shader.SetBuffer(_emitKernel, "uEmits", _emitBuffer);
-            _shader.SetBuffer(_emitKernel, "uParticles", _particleBuffer);
-            _shader.SetBuffer(_emitKernel, "uParticles_RW", _particleBuffer);
-            _shader.SetBuffer(_emitKernel, "uParticleCount", _countBuffer);
-            _shader.SetBuffer(_emitKernel, "uParticleCount_RW", _countBuffer);
-
-            _shader.SetBuffer(_simulateDispatchKernel, "uSimulateCommand_RW", _simulateCommandBuffer);
-            _shader.SetBuffer(_simulateDispatchKernel, "uParticleCount", _countBuffer);
-            _shader.SetBuffer(_simulateDispatchKernel, "uParticleCount_RW", _countBuffer);
-
-            _shader.SetBuffer(_simulateKernel, "uParticles", _particleBuffer);
-            _shader.SetBuffer(_simulateKernel, "uParticles_RW", _particleBuffer);
-            _shader.SetBuffer(_simulateKernel, "uParticleCount", _countBuffer);
-            _shader.SetBuffer(_simulateKernel, "uParticleCount_RW", _countBuffer);
-        }
-
-        private void DestroyBuffer_()
-        {
             if (_particleBuffer != null)
             {
                 _particleBuffer.Release();
-                _emitBuffer.Release();
-                _countBuffer.Release();
-                _simulateCommandBuffer.Release();
+                _pushCountBuffer.Release();
 
                 _particleBuffer = null;
-                _emitBuffer = null;
-                _countBuffer = null;
-                _simulateCommandBuffer = null;
+                _pushCountBuffer = null;
             }
         }
-        private void SetConstUniform_()
+        
+        public void ShaderSetBuffer(ComputeShader shader, int kernel, string prefix = "") {
+            shader.SetBuffer(kernel, "u" + prefix + "Particles", _particleBuffer);
+        }
+        public void ShaderSetBuffer(Material shader, string prefix = "") {
+            shader.SetBuffer("u" + prefix + "Particles", _particleBuffer);
+        }
+        public void ShaderSetStaticUniform(ComputeShader shader, string prefix = "") {
+            shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
+        }
+        public void ShaderSetStaticUniform(Material shader, string prefix = "") {
+            shader.SetInt("u" + prefix + "MaxCount", _maxParticleCount);
+        }
+        public static void ShaderSetDynamicUniform(ComputeShader shader, bool flip, int count, string prefix = "") {
+            shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
+            shader.SetInt("u" + prefix + "Count", count);
+        }
+        public static void ShaderSetDynamicUniform(Material shader, bool flip, int count, string prefix = "") {
+            shader.SetInt("u" + prefix + "Count", count);
+            shader.SetInt("u" + prefix + "Flip", flip ? 1 : 0);
+        }
+
+        public void Simulate(bool src_flip, float delta_time, Action<bool, int> on_simulate)
         {
-            _shader.SetInt("uMaxParticleCount", _maxParticleCount);
+            int src_count;
+            {
+                // Fetch SRC Count
+                int[] count_data = new int[1];
+                _pushCountBuffer.GetData(count_data);
+                src_count = Math.Min(count_data[0], _maxParticleCount);
+
+                // Set DST Count & Emit
+                int dst_count = Math.Min(Emits.Count, _maxParticleCount);
+                W[] dst_data = StructUtil<W, T>.ToWords(Emits.GetRange(0, dst_count));
+                count_data[0] = dst_count;
+                Emits.Clear();
+                _pushCountBuffer.SetData(count_data);
+                _particleBuffer.SetData(dst_data, 0, src_flip ? 0 : _maxParticleCount * StructUtil<W, T>.WordCount, dst_count * StructUtil<W, T>.WordCount);
+            }
+
+            if (src_count > 0)
+            {
+                on_simulate(src_flip, src_count);
+
+                ShaderSetDynamicUniform(_shader, src_flip, src_count);
+                _shader.SetFloat("uDeltaTime", delta_time);
+                _shader.Dispatch(_simulateKernel, (int)((src_count + _simulateKernelGroupX - 1) / _simulateKernelGroupX), 1, 1);
+            }
         }
     }
 
