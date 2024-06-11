@@ -6,7 +6,6 @@
 #include "ParticleCluster.cginc"
 #include "ParticleHashGrid.cginc"
 #include "VortexMethod.cginc"
-#include "SharedReduce.cginc"
 #include "Grid.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
@@ -33,8 +32,6 @@ float buoyancy_velocity_from_pos(in const float3 pos) {
     return uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0) * _VM_HEAT_BUOYANCY_FACTOR(VM);
 }
 
-SR_DEF_SHARED_BUFFER(PosVor, PosVor, GROUP_SIZE_X);
-
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     uint src_idx = id.x;
@@ -42,7 +39,8 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     p.life -= uDeltaTime;
 
     float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
-    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[P_ID]));
+    uint s = _PC_IDX(Vortex, 0);
+    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
 
     p.pos += v * uDeltaTime;

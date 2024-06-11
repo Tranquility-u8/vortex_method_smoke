@@ -46,7 +46,7 @@ float buoyancy_velocity_from_pos(in const float3 pos) {
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
-    uint src_idx = id.x, src_count = PC_COUNT;
+    uint src_idx = id.x;
     VortexParticle p = PC_GET(SAFE, src_idx);
     p.life -= uDeltaTime;
 
@@ -57,7 +57,8 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
 
     // Update Position
     float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
-    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uParticles[P_ID]));
+    uint s = PC_IDX(0);
+    #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
 
     p.pos += v * uDeltaTime;
@@ -67,6 +68,6 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     if (p.pos.y > 10)
         p.pos.y = 10 - abs(v.y) * uDeltaTime; */
 
-    if (src_idx < src_count && p.life >= 0)
+    if (src_idx < PC_COUNT && p.life >= 0)
         PC_PUSH(SAFE, p);
 }
