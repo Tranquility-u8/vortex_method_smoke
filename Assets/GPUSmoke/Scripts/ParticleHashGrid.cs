@@ -3,6 +3,7 @@ using System.Numerics;
 using GPUSorting.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GPUSmoke
 {
@@ -42,7 +43,9 @@ namespace GPUSmoke
             _rangeBufferClearData = new uint[(CellCount + 1) * 2];
             _cellCountBitWidth = BitOperation.FindMSB(CellCount) + 1;
 
-            if (true) {
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Direct3D12 || 
+                SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan
+                ) {
                 _one_sweep_sorter = new(one_sweep_sorter_shader, cluster.MaxParticleCount, ref _sorter_tmp0, ref _sorter_tmp1, ref _sorter_tmp2, ref _sorter_tmp3, ref _sorter_tmp4);
             } else {
                 _device_radix_sorter = new(device_radix_sorter_shader, cluster.MaxParticleCount, ref _sorter_tmp0, ref _sorter_tmp1, ref _sorter_tmp2, ref _sorter_tmp3);
