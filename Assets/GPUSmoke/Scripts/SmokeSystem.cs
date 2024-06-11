@@ -16,7 +16,7 @@ namespace GPUSmoke
         public ComputeShader TracerComputeShader;
         public int MaxVortexParticleCount;
         public int MaxTracerParticleCount;
-        public Material ParticleMaterial;
+        public List<Material> ParticleMaterials;
         
         [Header("Heat Field")]
         public ComputeShader HeatFieldShader;
@@ -55,7 +55,7 @@ namespace GPUSmoke
             _vortexCluster = new(VortexComputeShader, vm_config, MaxVortexParticleCount);
             _tracerCluster = new(TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount);
             _vortexHashGrid = new(DeviceRadixSortComputeShader, OneSweepSortComputeShader, VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
-            _tracerDrawer = new(ParticleMaterial, _tracerCluster, Bounds);
+            _tracerDrawer = new(ParticleMaterials, _tracerCluster, Bounds);
             
             _heatField.SetShaderProperty(_vortexCluster, "Heat");
             _heatField.SetShaderProperty(_tracerCluster, "Heat");

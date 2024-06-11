@@ -6,23 +6,27 @@ namespace GPUSmoke
 {
     public class ParticleDrawer<W, T> where W : unmanaged where T : IStruct<W>, new()
     {
-        private readonly Material _material;
+        private readonly List<Material> _materials;
         private readonly Bounds _bounds;
 
-        public Material Material { get => _material; }
+        public List<Material> Materials { get => _materials; }
 
-        public ParticleDrawer(Material material, ParticleCluster<W, T> cluster, Bounds bounds)
+        public ParticleDrawer(List<Material> materials, ParticleCluster<W, T> cluster, Bounds bounds)
         {
-            _material = material;
+            _materials = materials;
             _bounds = bounds;
-            cluster.SetMaterialBuffer(_material);
-            cluster.SetMaterialStaticUniform(_material);
+            foreach (Material m in _materials) {
+                cluster.SetMaterialBuffer(m);
+                cluster.SetMaterialStaticUniform(m);
+            }
         }
 
         public void Draw(bool flip, int count)
         {
-            ParticleCluster<W, T>.SetMaterialDynamicUniform(_material, flip, count);
-            Graphics.DrawProcedural(_material, _bounds, MeshTopology.Triangles, count * 6);
+            foreach (Material m in _materials) {
+                ParticleCluster<W, T>.SetMaterialDynamicUniform(m, flip, count);
+                Graphics.DrawProcedural(m, _bounds, MeshTopology.Triangles, count * 6);
+            }
         }
     }
 

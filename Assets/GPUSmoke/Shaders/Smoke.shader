@@ -12,7 +12,7 @@ Shader "Unlit/Smoke"
         Blend SrcAlpha OneMinusSrcAlpha
         Cull back
         LOD 100
-
+        
         Pass
         {
             CGPROGRAM
@@ -63,6 +63,7 @@ Shader "Unlit/Smoke"
             ENDCG
 
         }
+        // UsePass "Universal Render Pipeline/Lit/ShadowCaster"
     }
     Fallback Off
 }
