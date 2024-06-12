@@ -15,8 +15,8 @@ Shader "Unlit/Smoke"
     }
     SubShader
     {
-        // Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Transparent" "Queue" = "Transparent" }
-        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" "Queue" = "Geometry" }
+        Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Transparent" "Queue" = "Transparent" }
+        // Tags { "RenderPipeline" = "UniversalPipeline" "RenderType" = "Opaque" "Queue" = "Geometry" }
         Blend SrcAlpha OneMinusSrcAlpha
         Cull back
         LOD 100
@@ -37,6 +37,7 @@ Shader "Unlit/Smoke"
 
             #include "VortexMethod.cginc"
             #include "ParticleCluster.cginc"
+            #include "MatCol.cginc"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -68,20 +69,19 @@ Shader "Unlit/Smoke"
             {
                 TracerParticle p = PC_GET(UNSAFE, id / 6u);
                 float3x3 view3 = (float3x3)(UNITY_MATRIX_V);
-                float3x3 view3_t = transpose(view3);
-                float4x4 proj_t = transpose(UNITY_MATRIX_P);
                 // World
                 float3 w_p = p.pos;
-                float3 w_dx = view3[0] * _Radius, w_dy = view3[1] * _Radius;
+                float3 w_dx = FMAT3_ROW(view3, 0) * _Radius;
+                float3 w_dy = FMAT3_ROW(view3, 1) * _Radius; // Correct (Col of transpose/inverse(view3))
                 
                 // View
                 float4 v_p4 = mul(UNITY_MATRIX_V, float4(w_p, 1.0));
                 float3 v_p = v_p4.xyz / v_p4.w;
-                float3 v_dx = float3(1, 0, 0), v_dy = float3(0, 1, 0);
 
                 // Clip
-                float4 c_p = mul(UNITY_MATRIX_P, float4(v_p, 1.0));
-                float4 c_dx = proj_t[0] * _Radius, c_dy = proj_t[1] * _Radius;
+                float4 c_p = mul(UNITY_MATRIX_P, v_p4);
+                float4 c_dx = FMAT4_COL(UNITY_MATRIX_P, 0) * _Radius;
+                float4 c_dy = FMAT4_COL(UNITY_MATRIX_P, 1) * _Radius;
 
                 id %= 6u;
                 id = id < 3u ? id : 6u - id;
@@ -90,7 +90,7 @@ Shader "Unlit/Smoke"
 
                 V2F o;
                 o.c_pos = c_p + c_dx * ix2 + c_dy * iy2;
-                o.v_pos = v_p + v_dx * ix2 + v_dy * iy2;
+                o.v_pos = v_p + float3(ix2, iy2, 0);
                 o.v_light = mul(view3, normalize(GetMainLight().direction));
                 o.w_pos = w_p + w_dx * ix2 + w_dy * iy2;
                 o.uv = float2(ix, iy);
@@ -112,7 +112,6 @@ Shader "Unlit/Smoke"
             
             float4 frag(V2F i) : COLOR
             {
-                return float4(clamp(float3(i.w_pos.x / 16.0, 0, 0), float3(0, 0, 0), float3(1, 1, 1)), 1.0);
                 float3 ambient = float3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
                 
                 float shadow = MainLightRealtimeShadow(i.s_pos);   
@@ -143,6 +142,7 @@ Shader "Unlit/Smoke"
 
             #include "VortexMethod.cginc"
             #include "ParticleCluster.cginc"
+            #include "MatCol.cginc"
 
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
@@ -170,15 +170,11 @@ Shader "Unlit/Smoke"
                 TracerParticle p = PC_GET(UNSAFE, id / 6u);
                 // World
                 float3 w_p = p.pos;
-                
-                // View
-                float4 v_p4 = mul(UNITY_MATRIX_V, float4(w_p, 1.0));
-                float3 v_p = v_p4.xyz / v_p4.w;
-                float3 v_dx = float3(1, 0, 0), v_dy = float3(0, 1, 0);
 
                 // Clip
-                float4 c_p = mul(UNITY_MATRIX_P, float4(v_p, 1.0));
-                float4 c_dx = UNITY_MATRIX_P[0] * _Radius, c_dy = UNITY_MATRIX_P[1] * _Radius, c_dz = transpose(UNITY_MATRIX_P)[2] * _Radius;
+                float4 c_p = mul(UNITY_MATRIX_VP, float4(w_p, 1.0));
+                float4 c_dx = FMAT4_COL(UNITY_MATRIX_P, 0) * _Radius;
+                float4 c_dy = FMAT4_COL(UNITY_MATRIX_P, 1) * _Radius;
 
                 id %= 6u;
                 id = id < 3u ? id : 6u - id;
@@ -187,7 +183,7 @@ Shader "Unlit/Smoke"
 
                 V2F o;
                 o.uv = float2(ix, iy);
-                o.pos = c_p + c_dx * ix2 + c_dy * iy2 - c_dz;
+                o.pos = c_p + c_dx * ix2 + c_dy * iy2;
                 /* #if UNITY_REVERSED_Z
                     o.pos -= c_dz;
                 #else
