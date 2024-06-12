@@ -703,6 +703,111 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 09eaa5f468d1a494e849f81179e78929, type: 2}
+--- !u!1 &1055973827
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1055973831}
+  - component: {fileID: 1055973830}
+  - component: {fileID: 1055973829}
+  - component: {fileID: 1055973828}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1055973828
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055973827}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1055973829
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055973827}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1055973830
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055973827}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1055973831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1055973827}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.49, y: 12.16, z: 2.09}
+  m_LocalScale: {x: 7, y: 1, z: 7}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1090933099
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,12 +943,12 @@ MonoBehaviour:
   HeatStddev: 6
   VortexSpawnRadius: 0.25
   VortexSpawnTime: 0.05
-  TracerSpawnRadius: 0.5
+  TracerSpawnRadius: 0.25
   TracerSpawnTime: 0.001
-  MinVorticity: 3
+  MinVorticity: 0
   MaxVorticity: 5
-  MinLifespan: 5
-  MaxLifespan: 7
+  MinLifespan: 3
+  MaxLifespan: 5
 --- !u!4 &1560767386
 Transform:
   m_ObjectHideFlags: 0
@@ -891,14 +996,14 @@ MonoBehaviour:
   SmokeSystem: {fileID: 2005683826}
   Heat: 200
   HeatStddev: 4
-  VortexSpawnRadius: 0.5
+  VortexSpawnRadius: 0.25
   VortexSpawnTime: 0.05
-  TracerSpawnRadius: 1
+  TracerSpawnRadius: 0.25
   TracerSpawnTime: 0.001
-  MinVorticity: 5
-  MaxVorticity: 10
-  MinLifespan: 5
-  MaxLifespan: 7
+  MinVorticity: 0
+  MaxVorticity: 5
+  MinLifespan: 3
+  MaxLifespan: 5
 --- !u!4 &1682061160
 Transform:
   m_ObjectHideFlags: 0
@@ -965,13 +1070,13 @@ MonoBehaviour:
   Draws:
   - Material: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
     Camera: {fileID: 0}
-    CastShadows: 0
+    CastShadows: 1
     ReceiveShadows: 1
     Layer: 0
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 65536
-  MaxTracerParticleCount: 131072
+  MaxTracerParticleCount: 1048576
   HeatFieldShader: {fileID: 7200000, guid: 2093a7ddb71a221eda939fd4db958a2e, type: 3}
   HeatFieldMaxGridSize: 32
   HeatFieldMaxEntryCount: 1024
@@ -979,7 +1084,7 @@ MonoBehaviour:
   DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
   OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
   VortexHashGridMaxGridSize: 32
-  Epsilon: 0.1
+  Epsilon: 0.02
   HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -995,3 +1100,4 @@ SceneRoots:
   - {fileID: 1090933100}
   - {fileID: 1161647875}
   - {fileID: 188746888}
+  - {fileID: 1055973831}

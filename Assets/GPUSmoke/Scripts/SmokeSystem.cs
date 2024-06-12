@@ -12,7 +12,7 @@ namespace GPUSmoke
         public Bounds Bounds;
         public float TimeScale = 1.0f;
         
-        [Header("Draws")]
+        [Header("Rendering")]
         public List<DrawConfig> Draws;
 
         [Header("Particle")]
