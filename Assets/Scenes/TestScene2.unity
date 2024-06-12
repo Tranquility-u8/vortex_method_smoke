@@ -962,11 +962,11 @@ MonoBehaviour:
     m_Extent: {x: 16, y: 16, z: 16}
   TimeScale: 1
   Draws:
-  - Material: {fileID: 2100000, guid: 91c3d9e6c95bf3c76a6d29eb3f0c80ea, type: 2}
+  - Material: {fileID: 2100000, guid: cdb87e50568a45637a0a3335110c7d69, type: 2}
     Camera: {fileID: 0}
     CastShadows: 0
     ReceiveShadows: 1
-    Layer: 0
+    Layer: 6
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 65536
