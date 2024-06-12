@@ -8,6 +8,7 @@ Shader "Custom/Smoke6WayWBOIT"
         _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
         _ClipThreshold ("ClipThreshold", Range(0, 1)) = 0.1
         _Radius ("Radius", float) = 0.5
+        _Frequency("Frequency", float) = 1.0
 
         [Space(10)][Header(Shadow)]
         _ShadowFadeIn ("ShadowFadeIn", Range(1, 100)) = 30
@@ -51,6 +52,7 @@ Shader "Custom/Smoke6WayWBOIT"
             
             float _Radius;
             float _ClipThreshold;
+            float _Frequency;
             Texture3D _LightmapA;
             SamplerState sampler_LightmapA;
             Texture3D _LightmapB;
@@ -113,11 +115,11 @@ Shader "Custom/Smoke6WayWBOIT"
             
             void frag(V2F i, out float4 accum : SV_Target0, out float4 reveal : SV_Target1)
             {
-                half4 map_a = _LightmapA.Sample(sampler_LightmapA, float3(i.uv, i.life));
+                half4 map_a = _LightmapA.Sample(sampler_LightmapA, float3(i.uv, i.life * _Frequency));
                 half alpha = map_a.w;
                 clip(alpha - _ClipThreshold);
 
-                half3 map_b = _LightmapB.Sample(sampler_LightmapB, float3(i.uv, i.life)).rgb;
+                half3 map_b = _LightmapB.Sample(sampler_LightmapB, float3(i.uv, i.life * _Frequency)).rgb;
 
                 half3 ambient = half3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
                 
@@ -162,16 +164,15 @@ Shader "Custom/Smoke6WayWBOIT"
             PC_DEF_BUFFER(TracerParticle)
 
             float _Radius;
-
-            Texture2D _SpriteTex;
-            SamplerState sampler_SpriteTex;
-            float4 _BaseColor;
-
             float _ClipThreshold;
+            float _Frequency;
+            Texture3D _LightmapA;
+            SamplerState sampler_LightmapA;
 
             struct V2F
             {
-                float2 uv : TEXCOORD;
+                float2 uv : TEXCOORD0;
+                nointerpolation half life : TEXCOORD1;
                 V2F_SHADOW_CASTER;
             };
 
@@ -193,6 +194,7 @@ Shader "Custom/Smoke6WayWBOIT"
 
                 V2F o;
                 o.uv = float2(ix, iy);
+                o.life = p.life;
                 o.pos = c_p + c_dx * ix2 + c_dy * iy2;
                 /* #if UNITY_REVERSED_Z
                     o.pos -= c_dz;
@@ -205,7 +207,7 @@ Shader "Custom/Smoke6WayWBOIT"
 
             fixed4 frag(V2F i) : COLOR
             {
-                float alpha = _SpriteTex.Sample(sampler_SpriteTex, i.uv).a;
+                float alpha = _LightmapA.Sample(sampler_LightmapA, float3(i.uv, i.life * _Frequency)).a;
                 clip(alpha - _ClipThreshold);
                 SHADOW_CASTER_FRAGMENT(i);
             }
