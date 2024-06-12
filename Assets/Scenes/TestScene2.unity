@@ -838,7 +838,7 @@ MonoBehaviour:
   VortexSpawnRadius: 0.25
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.25
-  TracerSpawnTime: 0.001
+  TracerSpawnTime: 0.005
   MinVorticity: 0
   MaxVorticity: 5
   MinLifespan: 3
@@ -893,7 +893,7 @@ MonoBehaviour:
   VortexSpawnRadius: 0.25
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.25
-  TracerSpawnTime: 0.001
+  TracerSpawnTime: 0.005
   MinVorticity: 0
   MaxVorticity: 5
   MinLifespan: 3
@@ -959,7 +959,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Bounds:
     m_Center: {x: 0, y: 16, z: 0}
-    m_Extent: {x: 16, y: 16, z: 16}
+    m_Extent: {x: 32, y: 16, z: 32}
   TimeScale: 1
   Draws:
   - Material: {fileID: 2100000, guid: cdb87e50568a45637a0a3335110c7d69, type: 2}

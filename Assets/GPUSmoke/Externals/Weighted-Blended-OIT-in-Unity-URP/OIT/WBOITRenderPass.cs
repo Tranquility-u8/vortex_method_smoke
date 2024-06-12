@@ -51,17 +51,17 @@ public class WBOITRenderPass : ScriptableRenderPass
 
     public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
     {
-        cmd.GetTemporaryRT(m_accumTexID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        cmd.GetTemporaryRT(m_accumTexID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGBHalf, RenderTextureReadWrite.Linear);
         m_accumulate = new RenderTargetIdentifier(m_accumTexID);
         cmd.SetRenderTarget(m_accumulate);
         cmd.ClearRenderTarget(false, true, new Color(0.0f, 0.0f, 0.0f, 0.0f));
 
-        cmd.GetTemporaryRT(m_revealageTexID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
+        cmd.GetTemporaryRT(m_revealageTexID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
         m_revealage = new RenderTargetIdentifier(m_revealageTexID);
         cmd.SetRenderTarget(m_revealage);
         cmd.ClearRenderTarget(false, true, new Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-        cmd.GetTemporaryRT(m_destinationID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+        cmd.GetTemporaryRT(m_destinationID, cameraTextureDescriptor.width, cameraTextureDescriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
         m_destination = new RenderTargetIdentifier(m_destinationID);
 
         m_oitBuffers[0] = m_accumulate;
