@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Assertions;
 
-namespace GPUSorting.Runtime
+namespace GPUSmoke.GPUSorting.Runtime
 {
     public class ForwardSweep : OneSweep
     {

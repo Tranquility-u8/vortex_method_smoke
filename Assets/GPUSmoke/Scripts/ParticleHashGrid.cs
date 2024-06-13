@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
-using GPUSorting.Runtime;
+using GPUSmoke.GPUSorting.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -20,8 +20,8 @@ namespace GPUSmoke
 
 
         private ComputeBuffer _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, _sorter_tmp4;
-        private GPUSorting.Runtime.DeviceRadixSort _device_radix_sorter;
-        private GPUSorting.Runtime.OneSweep _one_sweep_sorter;
+        private DeviceRadixSort _device_radix_sorter;
+        private OneSweep _one_sweep_sorter;
 
         public ParticleCluster<W, T> Cluster { get => _cluster; }
 
