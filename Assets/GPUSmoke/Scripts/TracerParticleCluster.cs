@@ -3,24 +3,27 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public class TracerParticleCluster : DrawableParticleCluster<float, TracerParticle>
+    public class TracerParticleCluster : ParticleCluster<float, TracerParticle>
     {
         readonly VortexParticleCluster _vortexCluster;
         public VortexParticleCluster VortexCluster { get => _vortexCluster; }
-        public TracerParticleCluster(Material material, ComputeShader shader, VortexParticleCluster vortex_cluster, int max_particle_count, int max_emit_count)
-            : base(material, shader, max_particle_count, max_emit_count)
+        public TracerParticleCluster(
+            ComputeShader shader, 
+            VortexMethodConfig vortex_method_config, 
+            VortexParticleCluster vortex_cluster, 
+            int max_particle_count
+            ) : base(shader, max_particle_count)
         {
             _vortexCluster = vortex_cluster;
 
-            Shader.SetInt("uVortexMaxParticleCount", _vortexCluster.MaxParticleCount);
-            Shader.SetBuffer(SimulateKernel, "uVortexParticles", _vortexCluster.ParticleBuffer);
-            Shader.SetBuffer(SimulateKernel, "uVortexParticleCount", _vortexCluster.CountBuffer);
+            vortex_method_config.SetShaderUniform(shader, "VM");
+            _vortexCluster.SetShaderBuffer(Shader, SimulateKernel, "Vortex");
+            _vortexCluster.SetShaderStaticUniform(Shader, "Vortex");
         }
 
-        public void Simulate(bool src_flip, bool vortex_src_flip, float delta_time)
-        {
-            Shader.SetInt("uVortexFlip", vortex_src_flip ? 1 : 0);
-            base.Simulate(src_flip, delta_time);
+        public void Simulate(bool src_flip, bool vortex_flip, int vortex_count, float delta_time, Action<bool, int> on_simulate) {
+            VortexParticleCluster.SetShaderDynamicUniform(Shader, vortex_flip, vortex_count, "Vortex");
+            base.Simulate(src_flip, delta_time, on_simulate);
         }
     }
 

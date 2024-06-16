@@ -1,0 +1,46 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Update
+
+#include "SharedReduce.cginc"
+#include "Grid.cginc"
+
+struct Entry {
+    float3 center;
+    float heat, stddev;
+};
+
+RWTexture3D<float> uTexture_RW;
+GRID_DEF_UNIFORM;
+
+StructuredBuffer<Entry> uEntries;
+uint uEntryCount;
+
+float gaussian(in const float x){
+    #define ONE_OVER_SQRT_2PI 0.3989422804014327
+    return ONE_OVER_SQRT_2PI * exp(-0.5 * x * x);
+}
+
+float gaussian(in const float x, in const float stddev){
+    float inv_stddev = 1.0 / stddev;
+    return gaussian(x * inv_stddev) * inv_stddev;
+}
+
+float heat_from_entry(in const float3 world, in const Entry entry) {
+    return entry.heat * gaussian(distance(world, entry.center), entry.stddev);
+}
+
+SR_DEF_SHARED_BUFFER(Entry, Entries, 64);
+
+[numthreads(4, 4, 4)]
+void Update(uint3 cell : SV_DispatchThreadID, uint group_idx : SV_GroupIndex)
+{
+    float heat = 0;
+    float3 world = GRID_CELL2WORLD(FLT_CENTER, cell);
+    
+    #define LOAD_EDIT(X) uEntries[X]
+    #define REDUCE_EDIT(E) heat = max(heat, heat_from_entry(world, E))
+    SR_REDUCE(Entry, Entries, 64, group_idx, 0, uEntryCount, LOAD_EDIT, REDUCE_EDIT);
+    
+    if (GRID_CELL_IN_GRID_UINT(cell))
+        uTexture_RW[cell] = heat;
+}

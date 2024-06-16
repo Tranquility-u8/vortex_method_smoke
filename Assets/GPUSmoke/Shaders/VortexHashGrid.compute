@@ -1,0 +1,44 @@
+#pragma kernel Prepare
+#pragma kernel Resolve
+
+#include "ParticleCluster.cginc"
+#include "Grid.cginc"
+#include "VortexMethod.cginc"
+
+GRID_DEF_UNIFORM;
+
+PC_DEF_UNIFORM;
+PC_DEF_BUFFER(VortexParticle);
+
+StructuredBuffer<uint> uCellIDs;
+RWStructuredBuffer<uint> uCellIDs_RW;
+RWStructuredBuffer<uint> uParticleIDs_RW;
+
+RWStructuredBuffer<uint2> uRanges_RW;
+
+[numthreads(64, 1, 1)]
+void Prepare(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= PC_COUNT)
+        return;
+    VortexParticle p = PC_GET(UNSAFE, id.x);
+    int3 cell = GRID_WORLD2CELL(INT_FLOOR, p.pos);
+    uCellIDs_RW[id.x] = GRID_CELL_IN_GRID_INT(cell) ? GRID_CELL2ID(cell) : GRID_CELL_COUNT;
+    uParticleIDs_RW[id.x] = id.x;
+}
+
+[numthreads(64, 1, 1)]
+void Resolve(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= PC_COUNT)
+        return;
+
+    int ci0 = uCellIDs[id.x];
+    if (id.x == PC_COUNT - 1)
+        uRanges_RW[ci0].y = PC_COUNT;
+    else {
+        int ci1 = uCellIDs[id.x + 1];
+        if (ci0 != ci1)
+            uRanges_RW[ci0].y = uRanges_RW[ci1].x = id.x + 1;
+    }
+}

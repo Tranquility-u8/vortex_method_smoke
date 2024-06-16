@@ -8,17 +8,17 @@ namespace VortexMethod
     {
         /// <summary>
         /// 
-        /// TODO LISTS£º
-        /// 1£©GPU¼ÓËÙ
-        /// 2£©±ß½çÖµ´¦Àí
-        /// 3£©Óë³¡¾°½»»¥
-        /// 4£©TreecodeÓÅ»¯
+        /// TODO LISTS¿
+        /// 1¿GPU¿¿
+        /// 2¿¿¿¿¿¿
+        /// 3¿¿¿¿¿¿
+        /// 4¿Treecode¿¿
         /// 
         /// </summary>
         /// 
         [Header("Particle")]
-        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //Ê±¼ä²½³¤
-        [SerializeField] [Range(0f, 0.1f)] private float EPS; //ËÉ³ÚÒò×Ó
+        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //¿¿¿¿
+        [SerializeField] [Range(0f, 0.1f)] private float EPS; //¿¿¿¿
         
         private int NUM_VORTEX;
         [SerializeField] private int NUM_TRACER;
@@ -29,10 +29,10 @@ namespace VortexMethod
         [SerializeField] [Range(1, 10)] private float HEAT_X_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Y_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Z_SCALE;
-        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //¶¥µãÏ¸·ÖÊý
-        private float HEAT_GRID_SIZE; //Íø¸ñ±ß³¤
-        private float HEAT_CENTER_DEGREE = 1f; //ºËÐÄÎÂ¶È
-        [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR; //¸¡Á¦ÏµÊý
+        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //¿¿¿¿¿
+        private float HEAT_GRID_SIZE; //¿¿¿¿
+        private float HEAT_CENTER_DEGREE = 1f; //¿¿¿¿
+        [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR; //¿¿¿¿
 
         [Header("Particle Prefab")]
         [SerializeField] private GameObject prefab;
@@ -65,7 +65,7 @@ namespace VortexMethod
             if (Input.GetKeyDown(KeyCode.Return))
             {
 #if UNITY_EDITOR
-                Debug.Log("==========²½½ø==========");
+                Debug.Log("==========¿¿==========");
 #endif
                 UpdateParticle();
             }
@@ -100,7 +100,7 @@ namespace VortexMethod
         {
             int medium = HEAT_VERTEX_NUM / 2;
 
-            // ³õÊ¼»¯ÎÂ¶È³¡/¸¡Á¦³¡
+            // ¿¿¿¿¿¿/¿¿¿
             heat_field = new List<List<List<float>>>();
             
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -130,8 +130,8 @@ namespace VortexMethod
                 heat_field.Add(heat2d);
             }
 
-            // ³õÊ¼»¯ÎÐ¶È³¡
-            // vector.x => x·ÖÁ¿ vector.y => z·ÖÁ¿
+            // ¿¿¿¿¿¿
+            // vector.x => x¿¿ vector.y => z¿¿
             vortex_field = new List<List<List<Vector2>>>();
 
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -149,9 +149,9 @@ namespace VortexMethod
                 vortex_field.Add(vortex2d);
             }
 
-            // ÓÐÏÞ²î·Ö¼ÆËãÎÐ¶È³¡
+            // ¿¿¿¿¿¿¿¿¿
             // curl(F) = (dFz/dy - dFy/dz) x + (dFx/dz + dFz/dx)y + (dFy/dx + dFx/dy)z 
-            // ¼ÙÉè¸¡Á¦ÏòÉÏ£¬ÔòÓÐdFx = dFz = 0, ËùÒÔcurl(F) = (dFy/dz)x + (dFy/dx)z
+            // ¿¿¿¿¿¿¿¿¿dFx = dFz = 0, ¿¿curl(F) = (dFy/dz)x + (dFy/dx)z
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
             {
 
@@ -231,7 +231,7 @@ namespace VortexMethod
         {
             int median = HEAT_VERTEX_NUM / 2;
 
-            //ÎÂ¶È³¡×÷ÓÃ
+            //¿¿¿¿¿
             for(int i = 0; i < NUM_VORTEX; i++)
             {
                 Vector3 position = vortex_particles[i].data.pos;
@@ -257,7 +257,7 @@ namespace VortexMethod
                 float left_z = position.z / HEAT_GRID_SIZE + median - z;
                 float right_z = 1 - left_z;
 
-                //ÈýÏßÐÔ²åÖµ¼ÆËãÍâÁ¦³¡µÄÎÐ¶È¹±Ï×
+                //¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
                 float increment_x = (
                      right_x * right_y * right_z * vortex_field[x][y][z].x + 
                      right_x * right_y * left_z * vortex_field[x][y][z + 1].x +
@@ -281,7 +281,7 @@ namespace VortexMethod
                 vortex_particles[i].data.vor += new Vector3(increment_x * Dt, 0f, increment_z * Dt);
             }
 
-            //ÎÐÁ£×ÓÏà»¥×÷ÓÃ
+            //¿¿¿¿¿¿¿
             for (int i = 0; i < NUM_VORTEX; i++)
             {
                 tmp_vortex_particles[i] = vortex_particles[i];
