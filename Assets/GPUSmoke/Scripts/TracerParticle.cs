@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GPUSmoke
 {
-    public struct TracerParticle : IParticle<float>
+    public struct TracerParticle : IStruct<float>
     {
         public Vector3 pos;
         public float life;
