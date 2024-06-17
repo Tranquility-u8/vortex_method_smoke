@@ -25,6 +25,14 @@ namespace GPUSmoke
         public ComputeShader HeatFieldShader;
         public int HeatFieldMaxGridSize;
         public int HeatFieldMaxEntryCount;
+        
+        [Header("Collision")]
+        public LayerMask CollisionLayerMask;
+        public List<GameObject> CollisionRootObjects;
+        public float CollisionRadius;
+        public float SDFMargin;
+        public int SDFMaxGridSize;
+        [ReadOnly] public Texture3D SDFTexture;
 
         [Header("Vortex Hash Grid")]
         public ComputeShader VortexHashGridComputeShader;
@@ -39,6 +47,7 @@ namespace GPUSmoke
         private VortexParticleCluster _vortexCluster;
         private TracerParticleCluster _tracerCluster;
         private HeatField _heatField;
+        private SDF _sdf;
         private ParticleHashGrid<float, VortexParticle> _vortexHashGrid;
         private ParticleDrawer<float, TracerParticle> _tracerDrawer;
         private bool _flip = true;
@@ -65,6 +74,11 @@ namespace GPUSmoke
             
             _vortexHashGrid.SetShaderProperty(_vortexCluster, "Hash");
             _vortexHashGrid.SetShaderProperty(_tracerCluster, "Hash");
+            
+            var sdf_mesh = MeshUtil.Combine(CollisionRootObjects, Bounds, CollisionLayerMask, IndexFormat.UInt32);
+            var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, SDFMargin);
+            _sdf = SDF.Bake(sdf_bound, SDFMaxGridSize, sdf_mesh);
+            SDFTexture = _sdf.Texture;
         }
 
         void OnDisable()
@@ -113,7 +127,7 @@ namespace GPUSmoke
             Gizmos.color = Color.cyan;
             Gizmos.matrix = Matrix4x4.identity;
             Gizmos.DrawWireCube(Bounds.center, Bounds.size);
-
+            
             Gizmos.color = prev_color;
             Gizmos.matrix = prev_matrix;
         }

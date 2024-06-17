@@ -12,6 +12,9 @@ namespace GPUSmoke
         public List<GameObject> Roots;
         public IndexFormat IndexFormat;
         public MeshFilter MeshFilter;
+        public int MaxGridSize;
+        public Texture3D Texture;
+        public float Margin;
         
         // Start is called before the first frame update
         void Start()
@@ -21,7 +24,15 @@ namespace GPUSmoke
         
         [ContextMenu("Extract Mesh")]
         private void ExtractMesh() {
-            MeshFilter.mesh = MeshCombiner.CombineRoot(Roots, Bounds, LayerMask, IndexFormat);
+            MeshFilter.mesh = MeshUtil.Combine(Roots, Bounds, LayerMask, IndexFormat);
+        }
+
+        [ContextMenu("Bake")]
+        private void Bake() {
+            var sdf_mesh = MeshUtil.Combine(Roots, Bounds, LayerMask, IndexFormat);
+            var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, Margin);
+            var sdf = SDF.Bake(sdf_bound, MaxGridSize, sdf_mesh);
+            Texture = sdf.Texture;
         }
 
         // Update is called once per frame
