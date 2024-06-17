@@ -1,26 +1,65 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Experimental.Rendering.Universal;
 
-namespace GPUSmoke1
+namespace GPUSmoke
 {
+    public class WBOITFeature : ScriptableRendererFeature
+    {
+        [System.Serializable]
+        public class WBOITSettings
+        {
+            public RenderPassEvent RenderPassEvent = RenderPassEvent.AfterRenderingOpaques;
+            public FilterSettings FilterSettings = new FilterSettings();
+        }
+
+        [System.Serializable]
+        public class FilterSettings
+        {
+            public RenderQueueType RenderQueueType;
+            public LayerMask LayerMask;
+
+            public FilterSettings()
+            {
+                RenderQueueType = RenderQueueType.Transparent;
+                LayerMask = 0;
+            }
+        }
+
+        public WBOITSettings Settings = new WBOITSettings();
+        public WBOITRenderPass WBOITRenderPass;
+
+
+        public override void Create()
+        {
+            FilterSettings filter = Settings.FilterSettings;
+            WBOITRenderPass = new WBOITRenderPass("WBOIT Pass", Settings.RenderPassEvent, filter.RenderQueueType, filter.LayerMask);
+        }
+
+        public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData rendering_data)
+        {
+            WBOITRenderPass.Setup(renderer.cameraColorTargetHandle, renderer.cameraDepthTargetHandle);
+        }
+
+        public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData rendering_data)
+        {
+            renderer.EnqueuePass(WBOITRenderPass);
+        }
+    }
+
+
     public class WBOITRenderPass : ScriptableRenderPass
     {
-        string m_profilerTag;
-        LayerMask m_layerMask;
-        FilteringSettings m_filteringSettings;
-        RenderStateBlock m_renderStateBlock;
-        Material m_blendMat = null;
+        private string _profilerTag;
+        private LayerMask _layerMask;
+        private FilteringSettings _filteringSettings;
+        private RenderStateBlock _renderStateBlock;
+        private Material _blendMat = null;
 
-        /// <summary>
-        /// RenderTarget Handle
-        /// </summary>
-        RenderTargetIdentifier m_cameraColor;
-        RenderTargetIdentifier m_cameraDepth;
+        private RTHandle _colorHandle, _depthHandle; // Camera
         RenderTargetIdentifier m_accumulate;
         RenderTargetIdentifier m_revealage;
         RenderTargetIdentifier m_destination;
@@ -31,24 +70,24 @@ namespace GPUSmoke1
         static readonly int m_accumTexID = Shader.PropertyToID("_AccumTex");
         static readonly int m_revealageTexID = Shader.PropertyToID("_RevealageTex");
 
-        public WBOITRenderPass(string profilerTag, RenderPassEvent renderPassEvent, RenderQueueType renderQueueType, LayerMask layerMask)
+        public WBOITRenderPass(string profiler_tag, RenderPassEvent renderPassEvent, RenderQueueType renderQueueType, LayerMask layerMask)
         {
             this.renderPassEvent = renderPassEvent;
-            m_profilerTag = profilerTag;
+            _profilerTag = profiler_tag;
 
-            m_layerMask = layerMask;
+            _layerMask = layerMask;
             RenderQueueRange renderQueueRange = (renderQueueType == RenderQueueType.Transparent)
                 ? RenderQueueRange.transparent
                 : RenderQueueRange.opaque;
-            m_filteringSettings = new FilteringSettings(renderQueueRange, m_layerMask);
-            m_renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
+            _filteringSettings = new FilteringSettings(renderQueueRange, _layerMask);
+            _renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
 
-            m_blendMat = new Material(CoreUtils.CreateEngineMaterial("cdc/FinalBlend"));
-            if (m_blendMat == null)
+            _blendMat = new Material(CoreUtils.CreateEngineMaterial("cdc/FinalBlend"));
+            if (_blendMat == null)
             {
                 Debug.Log("No shader");
             }
-            m_blendMat.hideFlags = HideFlags.DontSave;
+            _blendMat.hideFlags = HideFlags.DontSave;
         }
 
         public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor)
@@ -70,23 +109,23 @@ namespace GPUSmoke1
             m_oitBuffers[1] = m_revealage;
         }
 
-        public void Setup(RenderTargetIdentifier color, RenderTargetIdentifier depth)
+        public void Setup(RTHandle color, RTHandle depth)
         {
-            m_cameraColor = color;
-            m_cameraDepth = depth;
+            _colorHandle = color;
+            _depthHandle = depth;
         }
 
         void DoAccumulate(CommandBuffer cmd, ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            SortingCriteria sortingCriteria = (m_filteringSettings.renderQueueRange == RenderQueueRange.transparent)
+            SortingCriteria sortingCriteria = (_filteringSettings.renderQueueRange == RenderQueueRange.transparent)
                 ? SortingCriteria.CommonTransparent
                 : renderingData.cameraData.defaultOpaqueSortFlags;
             DrawingSettings drawSettings = CreateDrawingSettings(new ShaderTagId("WBOIT"), ref renderingData, sortingCriteria);
 
             cmd.Clear();
-            cmd.SetRenderTarget(m_oitBuffers, m_cameraDepth);
+            cmd.SetRenderTarget(m_oitBuffers, _depthHandle);
             context.ExecuteCommandBuffer(cmd);
-            context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref m_filteringSettings, ref m_renderStateBlock);
+            context.DrawRenderers(renderingData.cullResults, ref drawSettings, ref _filteringSettings, ref _renderStateBlock);
         }
 
         void DoBlend(CommandBuffer cmd, ScriptableRenderContext context)
@@ -94,14 +133,14 @@ namespace GPUSmoke1
             cmd.Clear();
             cmd.SetGlobalTexture("_AccumTex", m_accumulate);
             cmd.SetGlobalTexture("_RevealageTex", m_revealage);
-            Blit(cmd, m_cameraColor, m_destination, m_blendMat);
-            Blit(cmd, m_destination, m_cameraColor);
+            Blit(cmd, _colorHandle, m_destination, _blendMat);
+            Blit(cmd, m_destination, _colorHandle);
             context.ExecuteCommandBuffer(cmd);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
         {
-            CommandBuffer cmd = CommandBufferPool.Get(m_profilerTag);
+            CommandBuffer cmd = CommandBufferPool.Get(_profilerTag);
             DoAccumulate(cmd, context, ref renderingData);
             DoBlend(cmd, context);
             CommandBufferPool.Release(cmd);
@@ -116,5 +155,4 @@ namespace GPUSmoke1
 
 
     }
-
 }
