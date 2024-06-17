@@ -78,11 +78,13 @@ namespace GPUSmoke
         {
             Bounds sub_bounds = new Bounds(), tri_bounds = new Bounds();
             bool flag = false;
-            for (int i = 0; i < mesh.triangles.Count(); i += 3)
+            var triangles = mesh.triangles;
+            var vertices = mesh.vertices;
+            for (int i = 0; i < triangles.Count(); i += 3)
             {
-                Vector3 v0 = mesh.vertices[mesh.triangles[i + 0]];
-                Vector3 v1 = mesh.vertices[mesh.triangles[i + 1]];
-                Vector3 v2 = mesh.vertices[mesh.triangles[i + 2]];
+                Vector3 v0 = vertices[triangles[i + 0]];
+                Vector3 v1 = vertices[triangles[i + 1]];
+                Vector3 v2 = vertices[triangles[i + 2]];
                 tri_bounds.SetMinMax(
                     Vector3.Min(Vector3.Min(v0, v1), v2),
                     Vector3.Max(Vector3.Max(v0, v1), v2)
