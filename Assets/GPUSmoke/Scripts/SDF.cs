@@ -69,7 +69,6 @@ namespace GPUSmoke
                 bounds.size.y / grid_size.y,
                 bounds.size.z / grid_size.z
             );
-            // Debug.Log(cell_size_3);
             float cell_size = (cell_size_3.x + cell_size_3.y + cell_size_3.z) / 3.0f;
             float unit_dist = Math.Max(bounds.size.x, Math.Max(bounds.size.y, bounds.size.z));
             var sdf = new SDF(new Grid(bounds.min, cell_size, grid_size), baker.SdfTexture, unit_dist);
