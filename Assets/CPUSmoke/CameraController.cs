@@ -17,6 +17,8 @@ namespace VortexMethod
         {
             rotationLock = false;
             //Cursor.lockState = CursorLockMode.Locked;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         void Update()
@@ -31,17 +33,17 @@ namespace VortexMethod
 
         void Move()
         {
-            float x = Input.GetAxisRaw("Horizontal") * speed;
-            float y = Input.GetAxisRaw("Vertical") * speed;
+            float x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+            float y = Input.GetAxisRaw("Vertical") * speed * Time.deltaTime;
             transform.position += transform.TransformDirection(x * Vector3.right + y * Vector3.forward);
 
             if (Input.GetKey(KeyCode.E))
             {
-                transform.position += Vector3.up * speed;
+                transform.position += Vector3.up * speed * Time.deltaTime;
             }
             else if (Input.GetKey(KeyCode.Q))
             {
-                transform.position += Vector3.down * speed;
+                transform.position += Vector3.down * speed * Time.deltaTime;
             }
         }
 
@@ -50,8 +52,8 @@ namespace VortexMethod
             float mouseX = Input.GetAxis("Mouse X");
             float mouseY = Input.GetAxis("Mouse Y");
 
-            cameraPosition.x -= mouseY * mouseSensitivity;
-            cameraPosition.y += mouseX * mouseSensitivity;
+            cameraPosition.x -= mouseY * mouseSensitivity * Time.deltaTime;
+            cameraPosition.y += mouseX * mouseSensitivity * Time.deltaTime;
 
             transform.rotation = Quaternion.Euler(cameraPosition.x, cameraPosition.y, 0);
         }

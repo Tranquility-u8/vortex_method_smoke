@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace GPUSmoke {
     class DestroyUtil {
@@ -9,6 +10,13 @@ namespace GPUSmoke {
             }
         }
         public static void Release(ref RenderTexture texture) {
+            if (texture != null) {
+                texture.Release();
+                texture = null;
+            }            
+        }
+
+        public static void Release(ref RTHandle texture) {
             if (texture != null) {
                 texture.Release();
                 texture = null;
