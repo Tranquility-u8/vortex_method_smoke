@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name: WBOITFeature
   m_EditorClassIdentifier: 
   m_Active: 1
+  BlendShader: {fileID: 4800000, guid: cb56fee2c78aea48fa8e0ae5d8fab0ff, type: 3}
   Settings:
     RenderPassEvent: 400
     FilterSettings:

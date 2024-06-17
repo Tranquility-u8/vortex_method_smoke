@@ -33,6 +33,7 @@ namespace GPUSmoke
             }
         }
 
+        public Shader BlendShader;
         public WBOITSettings Settings = new();
         public WBOITRenderPass WBOITRenderPass;
 
@@ -40,7 +41,7 @@ namespace GPUSmoke
         public override void Create()
         {
             FilterSettings filter = Settings.FilterSettings;
-            WBOITRenderPass = new WBOITRenderPass("WBOIT Pass", Settings.RenderPassEvent, filter.RenderQueueType, filter.LayerMask);
+            WBOITRenderPass = new WBOITRenderPass(BlendShader, Settings.RenderPassEvent, filter.RenderQueueType, filter.LayerMask);
         }
 
         /* public override void SetupRenderPasses(ScriptableRenderer renderer, in RenderingData rendering_data)
@@ -57,22 +58,22 @@ namespace GPUSmoke
 
     public class WBOITRenderPass : ScriptableRenderPass
     {
-        private readonly string _profilerTag;
         private LayerMask _layerMask;
         private FilteringSettings _filteringSettings;
         private RenderStateBlock _renderStateBlock;
         private readonly Material _blendMaterial = null;
+
+        // private RTHandle _colorHandle, _depthHandle;
 
         private RenderTextureDescriptor _accumDescriptor, _revealDescriptor, _destDescriptor;
         private RTHandle _accumHandle, _revealHandle, _destHandle;
 
         private readonly RenderTargetIdentifier[] _identifiers = new RenderTargetIdentifier[2];
 
-        public WBOITRenderPass(string profiler_tag, RenderPassEvent render_pass_event, RenderQueueType render_queue_type, LayerMask layer_mask)
+        public WBOITRenderPass(Shader blend_shader, RenderPassEvent render_pass_event, RenderQueueType render_queue_type, LayerMask layer_mask)
         {
             base.renderPassEvent = render_pass_event;
 
-            _profilerTag = profiler_tag;
             _layerMask = layer_mask;
             RenderQueueRange render_queue_range = (render_queue_type == RenderQueueType.Transparent)
                 ? RenderQueueRange.transparent
@@ -80,7 +81,7 @@ namespace GPUSmoke
             _filteringSettings = new FilteringSettings(render_queue_range, _layerMask);
             _renderStateBlock = new RenderStateBlock(RenderStateMask.Nothing);
 
-            _blendMaterial = new Material(CoreUtils.CreateEngineMaterial("WBOIT/Blend"));
+            _blendMaterial = new Material(blend_shader);
             if (_blendMaterial == null)
             {
                 Debug.Log("No shader");
@@ -91,6 +92,11 @@ namespace GPUSmoke
             _revealDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.R8);
             _destDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.Default);
         }
+
+        /* public void Setup(RTHandle color_handle, RTHandle depth_handle) {
+            _colorHandle = color_handle;
+            _depthHandle = depth_handle;
+        } */
 
         public override void Configure(CommandBuffer cmd, RenderTextureDescriptor cam_tex_descriptor)
         {
@@ -108,34 +114,24 @@ namespace GPUSmoke
             _identifiers[0] = _accumHandle;
             _identifiers[1] = _revealHandle;
 
-            /* cmd.GetTemporaryRT(m_accumTexID, cam_tex_descriptor.width, cam_tex_descriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGBHalf, RenderTextureReadWrite.Linear);
-            m_accumulate = new RenderTargetIdentifier(m_accumTexID);
-            cmd.SetRenderTarget(m_accumulate);
-            cmd.ClearRenderTarget(false, true, new Color(0.0f, 0.0f, 0.0f, 0.0f));
-
-            cmd.GetTemporaryRT(m_revealageTexID, cam_tex_descriptor.width, cam_tex_descriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.R8, RenderTextureReadWrite.Linear);
-            m_revealage = new RenderTargetIdentifier(m_revealageTexID);
-            cmd.SetRenderTarget(m_revealage);
-            cmd.ClearRenderTarget(false, true, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-
-            cmd.GetTemporaryRT(m_destinationID, cam_tex_descriptor.width, cam_tex_descriptor.height, 0, FilterMode.Bilinear, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
-            m_destination = new RenderTargetIdentifier(m_destinationID); */
+            _blendMaterial.SetTexture("_AccumTexture", _accumHandle);
+            _blendMaterial.SetTexture("_RevealTexture", _revealHandle);
         }
 
         public override void Execute(ScriptableRenderContext context, ref RenderingData rendering_data)
         {
+            var color_handle = rendering_data.cameraData.renderer.cameraColorTargetHandle;
+            var depth_handle = rendering_data.cameraData.renderer.cameraDepthTargetHandle;
+
             if (rendering_data.cameraData.camera.cameraType != CameraType.Game)
                 return;
 
-            CommandBuffer cmd = CommandBufferPool.Get(_profilerTag);
+            CommandBuffer cmd = CommandBufferPool.Get();
 
             SortingCriteria sorting_criteria = (_filteringSettings.renderQueueRange == RenderQueueRange.transparent)
                 ? SortingCriteria.CommonTransparent
                 : rendering_data.cameraData.defaultOpaqueSortFlags;
             DrawingSettings draw_settings = CreateDrawingSettings(new ShaderTagId("WBOIT"), ref rendering_data, sorting_criteria);
-
-            var color_handle = rendering_data.cameraData.renderer.cameraColorTargetHandle;
-            var depth_handle = rendering_data.cameraData.renderer.cameraDepthTargetHandle;
 
             // Before Render
             cmd.Clear();
@@ -143,19 +139,14 @@ namespace GPUSmoke
             cmd.ClearRenderTarget(false, true, new Color(0.0f, 0.0f, 0.0f, 0.0f));
             cmd.SetRenderTarget(_revealHandle);
             cmd.ClearRenderTarget(false, true, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-
             cmd.SetRenderTarget(_identifiers, depth_handle);
             context.ExecuteCommandBuffer(cmd);
-            
+
             // Render
             context.DrawRenderers(rendering_data.cullResults, ref draw_settings, ref _filteringSettings, ref _renderStateBlock);
 
             // Blend
             cmd.Clear();
-            _blendMaterial.SetTexture("_AccumTexture", _accumHandle);
-            _blendMaterial.SetTexture("_RevealTexture", _revealHandle);
-            // Blitter.BlitCameraTexture(cmd, color_handle, _destHandle);
-            // Blitter.BlitCameraTexture(cmd, _destHandle, color_handle);
             Blit(cmd, color_handle, _destHandle, _blendMaterial);
             Blit(cmd, _destHandle, color_handle);
             context.ExecuteCommandBuffer(cmd);
