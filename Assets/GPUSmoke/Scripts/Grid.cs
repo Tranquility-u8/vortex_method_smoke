@@ -49,6 +49,12 @@ namespace GPUSmoke
             _cellSize = grid._cellSize;
             _gridSize = grid._gridSize;
         }
+        
+        public Grid(Vector3 bound_min, float cell_size, Vector3Int grid_size) {
+            _boundMin = bound_min;
+            _cellSize = cell_size;
+            _gridSize = grid_size;
+        }
 
         public void SetShaderUniform(ComputeShader shader, string prefix = "")
         {

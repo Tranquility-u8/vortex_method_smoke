@@ -51,6 +51,9 @@ namespace GPUSmoke
             {
                 Iterate_(obj.transform, (Transform t) =>
                 {
+                    if (!t.gameObject.activeInHierarchy)
+                        return false;
+
                     if ((layer_mask & (1 << t.gameObject.layer)) == 0)
                         return false;
 

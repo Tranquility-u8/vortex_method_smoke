@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -28,13 +29,12 @@ namespace GPUSmoke
             _texture.filterMode = FilterMode.Bilinear;
         }
 
-        public SDF() : base(new Bounds(Vector3.zero, Vector3.one), 1)
+        public SDF() : base(Vector3.zero, 1.0f, Vector3Int.one)
         {
             _texture = new(GridSize.x, GridSize.y, GridSize.z, 
                 UnityEngine.Experimental.Rendering.GraphicsFormat.R16_SFloat, 
                 UnityEngine.Experimental.Rendering.TextureCreationFlags.None
             );
-            Assert.AreEqual(GridSize, Vector3Int.one);
             _texture.wrapMode = TextureWrapMode.Clamp;
             _texture.filterMode = FilterMode.Point;
             _texture.SetPixel(0, 0, 0, new Color(float.PositiveInfinity, 0, 0));
@@ -46,12 +46,19 @@ namespace GPUSmoke
             if (mesh.vertexCount == 0)
                 return new();
 
-            Grid grid = new(bounds, max_grid_size);
-            bounds = grid.Bounds;
             MeshToSDFBaker baker = new(bounds.size, bounds.center, max_grid_size, mesh);
             baker.BakeSDF();
-            Assert.AreEqual(baker.GetGridSize(), grid.GridSize);
-            var sdf = new SDF(grid, baker.SdfTexture);
+            
+            bounds = new Bounds(bounds.center, baker.GetActualBoxSize());
+            Vector3Int grid_size = baker.GetGridSize();
+            var cell_size_3 = new Vector3(
+                bounds.size.x / grid_size.x,
+                bounds.size.y / grid_size.y,
+                bounds.size.z / grid_size.z
+            );
+            Debug.Log(cell_size_3);
+            float cell_size = (cell_size_3.x + cell_size_3.y + cell_size_3.z) / 3.0f;
+            var sdf = new SDF(new Grid(bounds.min, cell_size, grid_size), baker.SdfTexture);
             baker.Dispose();
             return sdf;
         }
