@@ -27,7 +27,7 @@ namespace GPUSmoke
         public int HeatFieldMaxEntryCount;
         
         [Header("Collision")]
-        public LayerMask CollisionLayerMask;
+        public LayerMask CollisionLayerMask = -1;
         public List<GameObject> CollisionRootObjects;
         public float CollisionRadius;
         public float SDFMargin;

@@ -79,7 +79,7 @@ namespace GPUSmoke
 
         public static Bounds GetSubBounds(Bounds bounds, Mesh mesh, float margin)
         {
-            Bounds sub_bounds = new Bounds(), tri_bounds = new Bounds();
+            Bounds sub_bounds = new(), tri_bounds = new();
             bool flag = false;
             var triangles = mesh.triangles;
             var vertices = mesh.vertices;
