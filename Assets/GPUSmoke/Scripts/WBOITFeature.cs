@@ -90,7 +90,7 @@ namespace GPUSmoke
 
             _accumDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.ARGBHalf);
             _revealDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.R8);
-            _destDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.Default);
+            _destDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.DefaultHDR);
         }
 
         /* public void Setup(RTHandle color_handle, RTHandle depth_handle) {
