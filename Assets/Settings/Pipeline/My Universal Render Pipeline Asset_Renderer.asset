@@ -18,7 +18,7 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 350128023045151997}
   m_RendererFeatureMap: fd1c84f794e7db04
-  m_UseNativeRenderPass: 0
+  m_UseNativeRenderPass: 1
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
@@ -39,10 +39,10 @@ MonoBehaviour:
   m_AssetVersion: 2
   m_OpaqueLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_TransparentLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_DefaultStencilState:
     overrideStencilState: 0
     stencilReference: 0
@@ -55,7 +55,7 @@ MonoBehaviour:
   m_DepthPrimingMode: 0
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
-  m_IntermediateTextureMode: 1
+  m_IntermediateTextureMode: 0
 --- !u!114 &350128023045151997
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,7 +76,7 @@ MonoBehaviour:
       RenderQueueType: 1
       LayerMask:
         serializedVersion: 2
-        m_Bits: 4294967295
+        m_Bits: 64
 --- !u!114 &8686172587702600054
 MonoBehaviour:
   m_ObjectHideFlags: 0
