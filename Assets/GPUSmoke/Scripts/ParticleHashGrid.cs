@@ -26,11 +26,11 @@ namespace GPUSmoke
         public ParticleCluster<W, T> Cluster { get => _cluster; }
 
         public ParticleHashGrid(
-            ComputeShader device_radix_sorter_shader, 
-            ComputeShader one_sweep_sorter_shader, 
-            ComputeShader shader, 
-            ParticleCluster<W, T> cluster, 
-            Bounds bounds, 
+            ComputeShader device_radix_sorter_shader,
+            ComputeShader one_sweep_sorter_shader,
+            ComputeShader shader,
+            ParticleCluster<W, T> cluster,
+            Bounds bounds,
             int max_grid_size
             ) : base(bounds, max_grid_size)
         {
@@ -43,11 +43,14 @@ namespace GPUSmoke
             _rangeBufferClearData = new uint[(CellCount + 1) * 2];
             _cellCountBitWidth = BitOperation.FindMSB(CellCount) + 1;
 
-            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Direct3D12 || 
+            if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Direct3D12 ||
                 SystemInfo.graphicsDeviceType == GraphicsDeviceType.Vulkan
-                ) {
+                )
+            {
                 _one_sweep_sorter = new(one_sweep_sorter_shader, cluster.MaxParticleCount, ref _sorter_tmp0, ref _sorter_tmp1, ref _sorter_tmp2, ref _sorter_tmp3, ref _sorter_tmp4);
-            } else {
+            }
+            else
+            {
                 _device_radix_sorter = new(device_radix_sorter_shader, cluster.MaxParticleCount, ref _sorter_tmp0, ref _sorter_tmp1, ref _sorter_tmp2, ref _sorter_tmp3);
             }
 
@@ -66,17 +69,19 @@ namespace GPUSmoke
             _shader.SetBuffer(_resolveKernel, "uCellIDs", _cellIdBuffer);
             _shader.SetBuffer(_resolveKernel, "uRanges_RW", _rangeBuffer);
         }
-        
-        public void SetShaderBuffer(ComputeShader shader, int kernel, string prefix = "") {
+
+        public void SetShaderBuffer(ComputeShader shader, int kernel, string prefix = "")
+        {
             shader.SetBuffer(kernel, "u" + prefix + "Ranges", _rangeBuffer);
             shader.SetBuffer(kernel, "u" + prefix + "ParticleIDs", _particleIdBuffer);
         }
-        
-        public void SetShaderProperty<W_, T_>(ParticleCluster<W_, T_> cluster, string prefix = "") where W_ : unmanaged where T_ : IStruct<W_>, new(){
+
+        public void SetShaderProperty<W_, T_>(ParticleCluster<W_, T_> cluster, string prefix = "") where W_ : unmanaged where T_ : IStruct<W_>, new()
+        {
             SetShaderUniform(cluster.Shader, prefix);
             SetShaderBuffer(cluster.Shader, cluster.SimulateKernel, prefix);
         }
-        
+
         public void Generate(bool flip, int count)
         {
             _rangeBuffer.SetData(_rangeBufferClearData);
@@ -85,12 +90,15 @@ namespace GPUSmoke
             {
                 ParticleCluster<W, T>.SetShaderDynamicUniform(_shader, flip, count);
                 _shader.Dispatch(_prepareKernel, (int)((count + _prepareKernelGroupX - 1) / _prepareKernelGroupX), 1, 1);
-                if (_device_radix_sorter != null)
-                    _device_radix_sorter.SortBitWidth(_cellCountBitWidth, count, _cellIdBuffer, _particleIdBuffer, _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, typeof(uint), typeof(uint), true);
-                else if (_one_sweep_sorter != null)
-                    _one_sweep_sorter.SortBitWidth(_cellCountBitWidth, count, _cellIdBuffer, _particleIdBuffer, _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, _sorter_tmp4, typeof(uint), typeof(uint), true);
-                else
-                    Debug.LogError("No Sorter Available");
+                if (count > 1)
+                {
+                    if (_device_radix_sorter != null)
+                        _device_radix_sorter.SortBitWidth(_cellCountBitWidth, count, _cellIdBuffer, _particleIdBuffer, _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, typeof(uint), typeof(uint), true);
+                    else if (_one_sweep_sorter != null)
+                        _one_sweep_sorter.SortBitWidth(_cellCountBitWidth, count, _cellIdBuffer, _particleIdBuffer, _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, _sorter_tmp4, typeof(uint), typeof(uint), true);
+                    else
+                        Debug.LogError("No Sorter Available");
+                }
                 _shader.Dispatch(_resolveKernel, (int)((count + _resolveKernelGroupX - 1) / _resolveKernelGroupX), 1, 1);
             }
         }

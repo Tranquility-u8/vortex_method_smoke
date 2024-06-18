@@ -7,6 +7,7 @@
 #include "ParticleHashGrid.cginc"
 #include "VortexMethod.cginc"
 #include "Grid.cginc"
+#include "SDF.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
@@ -18,9 +19,12 @@ _PHG_DEF_BUFFER(Hash);
 _VM_DEF_UNIFORM(VM);
 _VM_DEF_FUNC(VM);
 
-PC_DEF_UNIFORM
-PC_DEF_BUFFER(VortexParticle)
-PC_DEF_BUFFER_RW(VortexParticle)
+PC_DEF_UNIFORM;
+PC_DEF_BUFFER(VortexParticle);
+PC_DEF_BUFFER_RW(VortexParticle);
+    
+_SDF_DEF_UNIFORM(SDF);
+_SDF_DEF_TEXTURE(SDF);
 
 float uDeltaTime;
 
@@ -45,9 +49,12 @@ float buoyancy_velocity_from_pos(in const float3 pos) {
 }
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
-void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
+void Simulate(uint3 id : SV_DispatchThreadID) {
     uint src_idx = id.x;
-    VortexParticle p = PC_GET(SAFE, src_idx);
+    if (src_idx >= PC_COUNT)
+        return;
+
+    VortexParticle p = PC_GET(UNSAFE, __PHG_PARTICLE_IDS(Hash)[src_idx]); // Visit sorted particle to improve coherency
     p.life -= uDeltaTime;
 
     // Update Vortex
@@ -60,14 +67,11 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     uint s = PC_IDX(0);
     #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
-
     p.pos += v * uDeltaTime;
-    /* if (p.pos.y <= 10)
-        v.y += buoyancy_velocity_from_pos(p.pos);
-    p.pos += v * uDeltaTime;
-    if (p.pos.y > 10)
-        p.pos.y = 10 - abs(v.y) * uDeltaTime; */
+    
+    // Check Collision
+    _SDF_FIX_WORLD_POS(SDF, p.pos);
 
-    if (src_idx < PC_COUNT && p.life >= 0)
+    if (p.life >= 0)
         PC_PUSH(SAFE, p);
 }

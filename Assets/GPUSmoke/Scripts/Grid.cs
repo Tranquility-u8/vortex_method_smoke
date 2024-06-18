@@ -56,7 +56,7 @@ namespace GPUSmoke
             _gridSize = grid_size;
         }
 
-        public void SetShaderUniform(ComputeShader shader, string prefix = "")
+        public virtual void SetShaderUniform(ComputeShader shader, string prefix = "")
         {
             shader.SetFloat("u" + prefix + "CellSize", _cellSize);
             float[] bound_min = new float[3] {_boundMin.x, _boundMin.y, _boundMin.z};
