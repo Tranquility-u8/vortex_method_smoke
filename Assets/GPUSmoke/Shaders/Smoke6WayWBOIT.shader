@@ -5,11 +5,12 @@ Shader "Custom/Smoke6WayWBOIT"
         [Header(Surface)]
         _LightmapA ("Texture", 3D) = "white" {} // Right + Top + Back + Transparency
         _LightmapB ("Texture", 3D) = "white" {} // Left + Bottom + Front
+        _NoiseFactor("NoiseFactor", float) = 0.005
         _BaseColor("BaseColor", Color) = (1, 1, 1, 1)
         _ClipThreshold ("ClipThreshold", Range(0, 1)) = 0.1
         _Radius ("Radius", float) = 0.5
         _Frequency("Frequency", float) = 1.0
-
+        
         [Space(10)][Header(Shadow)]
         _ShadowFadeIn ("ShadowFadeIn", Range(1, 100)) = 30
         _ShadowFadeOut ("ShadowFadeOut", Range(1, 100)) = 80
@@ -46,6 +47,7 @@ Shader "Custom/Smoke6WayWBOIT"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/CommonMaterial.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             PC_DEF_UNIFORM
             PC_DEF_BUFFER(TracerParticle)
@@ -53,10 +55,13 @@ Shader "Custom/Smoke6WayWBOIT"
             float _Radius;
             float _ClipThreshold;
             float _Frequency;
+
             Texture3D _LightmapA;
             SamplerState sampler_LightmapA;
             Texture3D _LightmapB;
             SamplerState sampler_LightmapB;
+            float _NoiseFactor;
+
             float4 _BaseColor;
             float _ShadowFadeIn;
             float _ShadowFadeOut;
@@ -112,14 +117,20 @@ Shader "Custom/Smoke6WayWBOIT"
 	                max(1e-2, min(3.0 * 1e3, 100.0 / (1e-5 + pow(view_z / 10.0, 3.0) + pow(view_z / 200.0, 6.0))));
 				return alpha * max(0.01, min(3000.0, 0.03 / (1e-5 + pow(abs(view_z) / 200.0, 4.0))));
 			}
+
+            float2 get_uv_noise(float2 uv, float time){
+                float noise = frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453 + time);
+                return noise * _NoiseFactor;
+            }
             
             void frag(V2F i, out float4 accum : SV_Target0, out float4 reveal : SV_Target1)
             {
-                half4 map_a = _LightmapA.Sample(sampler_LightmapA, float3(i.uv, i.life * _Frequency));
+                float2 noise = get_uv_noise(i.uv, i.life);
+                half4 map_a = _LightmapA.Sample(sampler_LightmapA, float3(i.uv + noise, i.life * _Frequency));
                 half alpha = map_a.w;
                 clip(alpha - _ClipThreshold);
 
-                half3 map_b = _LightmapB.Sample(sampler_LightmapB, float3(i.uv, i.life * _Frequency)).rgb;
+                half3 map_b = _LightmapB.Sample(sampler_LightmapB, float3(i.uv + noise, i.life * _Frequency)).rgb;
 
                 half3 ambient = half3(unity_SHAr.w, unity_SHAg.w, unity_SHAb.w);
                 
