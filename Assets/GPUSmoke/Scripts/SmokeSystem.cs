@@ -27,7 +27,7 @@ namespace GPUSmoke
         public int HeatFieldMaxEntryCount;
         
         [Header("Collision")]
-        public LayerMask CollisionLayerMask;
+        public LayerMask CollisionLayerMask = -1;
         public List<GameObject> CollisionRootObjects;
         public float CollisionRadius;
         public float SDFMargin;
@@ -68,6 +68,11 @@ namespace GPUSmoke
             _tracerCluster = new(TracerComputeShader, vm_config, _vortexCluster, MaxTracerParticleCount);
             _vortexHashGrid = new(DeviceRadixSortComputeShader, OneSweepSortComputeShader, VortexHashGridComputeShader, _vortexCluster, Bounds, VortexHashGridMaxGridSize);
             _tracerDrawer = new(Draws, _tracerCluster, Bounds);
+
+            var sdf_mesh = MeshUtil.Combine(CollisionRootObjects, Bounds, CollisionLayerMask, IndexFormat.UInt32);
+            var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, SDFMargin);
+            _sdf = SDF.Bake(sdf_bound, SDFMaxGridSize, sdf_mesh, CollisionRadius);
+            SDFTexture = _sdf.Texture;
             
             _heatField.SetShaderProperty(_vortexCluster, "Heat");
             _heatField.SetShaderProperty(_tracerCluster, "Heat");
@@ -75,10 +80,8 @@ namespace GPUSmoke
             _vortexHashGrid.SetShaderProperty(_vortexCluster, "Hash");
             _vortexHashGrid.SetShaderProperty(_tracerCluster, "Hash");
             
-            var sdf_mesh = MeshUtil.Combine(CollisionRootObjects, Bounds, CollisionLayerMask, IndexFormat.UInt32);
-            var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, SDFMargin);
-            _sdf = SDF.Bake(sdf_bound, SDFMaxGridSize, sdf_mesh);
-            SDFTexture = _sdf.Texture;
+            _sdf.SetShaderProperty(_vortexCluster, "SDF");
+            _sdf.SetShaderProperty(_tracerCluster, "SDF");
         }
 
         void OnDisable()

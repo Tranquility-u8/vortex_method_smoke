@@ -31,7 +31,7 @@ namespace GPUSmoke
         private void Bake() {
             var sdf_mesh = MeshUtil.Combine(Roots, Bounds, LayerMask, IndexFormat);
             var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, Margin);
-            var sdf = SDF.Bake(sdf_bound, MaxGridSize, sdf_mesh);
+            var sdf = SDF.Bake(sdf_bound, MaxGridSize, sdf_mesh, 0.0f);
             Texture = sdf.Texture;
         }
 
