@@ -7,15 +7,17 @@ using UnityEngine;
 
 public class RocketLauncher : MonoBehaviour
 {
-    [Header("Launcher")] 
+    [Header("Smoke")] 
     [SerializeField] private ParticleSystem particleSystem;
     [SerializeField] private SmokeSource smokeSource;
     [SerializeField] private float minLifespan = 0f;
     [SerializeField] private float maxLifespan = 1f;
-    
-    [Header("Rocket")]
-    private SmokeSystem smokeSystem;
+    [SerializeField] private float smokeDuration;
+
+    [Header("Launcher")] 
+    [SerializeField] private Transform launcherPoint;
     [SerializeField] private GameObject rocketPrefab;
+    [SerializeField] private SmokeSystem rocketSmokeSystem;
     
     void Start()
     {
@@ -33,16 +35,16 @@ public class RocketLauncher : MonoBehaviour
     void Launch()
     {
         particleSystem.Play();
-        StartCoroutine(OnSmoke(minLifespan, maxLifespan));
-        Instantiate(rocketPrefab);
-        
+        StartCoroutine(OnSmoke());
+        GameObject rocket = Instantiate(rocketPrefab, launcherPoint.position, launcherPoint.rotation);
+        rocket.GetComponentInChildren<SmokeSource>().SmokeSystem = rocketSmokeSystem;
     }
 
-    IEnumerator OnSmoke(float _minLifespan, float _maxLifespan)
+    IEnumerator OnSmoke()
     {
-        smokeSource.MinLifespan = _minLifespan;
-        smokeSource.MaxLifespan = _maxLifespan;
-        yield return new WaitForSeconds(0.7f);
+        smokeSource.MinLifespan = minLifespan;
+        smokeSource.MaxLifespan = maxLifespan;
+        yield return new WaitForSeconds(smokeDuration);
         smokeSource.MinLifespan = 0f;
         smokeSource.MaxLifespan = 0f;
     }
