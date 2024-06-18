@@ -342,7 +342,7 @@ GameObject:
   - component: {fileID: 373847811}
   m_Layer: 0
   m_Name: Collisions
-  m_TagString: Untagged
+  m_TagString: Collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -972,7 +972,7 @@ GameObject:
   - component: {fileID: 1055973828}
   m_Layer: 0
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1178,7 +1178,7 @@ GameObject:
   - component: {fileID: 1292946908}
   m_Layer: 0
   m_Name: Sphere
-  m_TagString: Untagged
+  m_TagString: Collider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1445,7 +1445,7 @@ MonoBehaviour:
     m_Bits: 4294967295
   CollisionRootObjects:
   - {fileID: 373847810}
-  CollisionRadius: 1
+  CollisionRadius: 0.5
   SDFMargin: 1
   SDFMaxGridSize: 128
   SDFTexture: {fileID: 0}

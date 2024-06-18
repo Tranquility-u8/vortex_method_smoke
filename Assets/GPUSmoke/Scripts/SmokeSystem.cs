@@ -71,7 +71,7 @@ namespace GPUSmoke
 
             var sdf_mesh = MeshUtil.Combine(CollisionRootObjects, Bounds, CollisionLayerMask, IndexFormat.UInt32);
             var sdf_bound = MeshUtil.GetSubBounds(Bounds, sdf_mesh, SDFMargin);
-            _sdf = SDF.Bake(sdf_bound, SDFMaxGridSize, sdf_mesh);
+            _sdf = SDF.Bake(sdf_bound, SDFMaxGridSize, sdf_mesh, CollisionRadius);
             SDFTexture = _sdf.Texture;
             
             _heatField.SetShaderProperty(_vortexCluster, "Heat");

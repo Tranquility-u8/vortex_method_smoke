@@ -59,12 +59,14 @@ namespace GPUSmoke
             SetShaderTexture(cluster.Shader, cluster.SimulateKernel, prefix);            
         }
 
-        public static SDF Bake(Bounds bounds, int max_grid_size, Mesh mesh)
+        public static SDF Bake(Bounds bounds, int max_grid_size, Mesh mesh, float collision_radius)
         {
             if (mesh.vertexCount == 0)
                 return new();
 
-            MeshToSDFBaker baker = new(bounds.size, bounds.center, max_grid_size, mesh);
+            float unit_dist = Math.Max(bounds.size.x, Math.Max(bounds.size.y, bounds.size.z));
+
+            MeshToSDFBaker baker = new(bounds.size, bounds.center, max_grid_size, mesh, sdfOffset:collision_radius / unit_dist);
             baker.BakeSDF();
             
             bounds = new Bounds(bounds.center, baker.GetActualBoxSize());
@@ -75,7 +77,6 @@ namespace GPUSmoke
                 bounds.size.z / grid_size.z
             );
             float cell_size = (cell_size_3.x + cell_size_3.y + cell_size_3.z) / 3.0f;
-            float unit_dist = Math.Max(bounds.size.x, Math.Max(bounds.size.y, bounds.size.z));
             var sdf = new SDF(new Grid(bounds.min, cell_size, grid_size), baker.SdfTexture, unit_dist);
             baker.Dispose();
             return sdf;

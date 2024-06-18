@@ -50,7 +50,7 @@ void Simulate(uint3 id : SV_DispatchThreadID) {
     #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
 
-    if (_SDF_SAMPLE(SDF, WORLD, p.pos) >= 0.5)
+    if (_SDF_SAMPLE(SDF, WORLD, p.pos) >= 0.0)
         p.pos += v * uDeltaTime;
 
     /* if (p.pos.y <= 10)
