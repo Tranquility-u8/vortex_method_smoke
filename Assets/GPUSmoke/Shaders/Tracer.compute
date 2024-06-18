@@ -33,9 +33,12 @@ float buoyancy_velocity_from_pos(in const float3 pos) {
 }
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
-void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
+void Simulate(uint3 id : SV_DispatchThreadID) {
     uint src_idx = id.x;
-    TracerParticle p = PC_GET(SAFE, src_idx);
+    if (src_idx >= PC_COUNT)
+        return;
+
+    TracerParticle p = PC_GET(UNSAFE, src_idx);
     p.life -= uDeltaTime;
 
     float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
@@ -51,6 +54,6 @@ void Simulate(uint3 id : SV_DispatchThreadID, uint group_idx : SV_GroupIndex) {
     if (p.pos.y > 10)
         p.pos.y = 10 - abs(v.y) * uDeltaTime; */
 
-    if (src_idx < PC_COUNT && p.life >= 0)
+    if (p.life >= 0)
         PC_PUSH(SAFE, p);
 }
