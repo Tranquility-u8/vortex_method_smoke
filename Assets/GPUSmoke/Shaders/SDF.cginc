@@ -1,0 +1,32 @@
+#ifndef SDF_CGINC
+#define SDF_CGINC
+
+#include "Grid.cginc"
+
+#define __SDF_TEXTURE(PREFIX) u##PREFIX##Texture
+#define __SDF_SAMPLER(PREFIX) sampler_u##PREFIX##Texture
+#define __SDF_UNIT_DIST(PREFIX) u##PREFIX##UnitDistance
+
+#define _SDF_DEF_UNIFORM(PREFIX) \
+    _GRID_DEF_UNIFORM(PREFIX) \
+    float __SDF_UNIT_DIST(PREFIX);
+
+#define _SDF_DEF_TEXTURE(PREFIX) \
+    Texture3D<float> __SDF_TEXTURE(PREFIX); \
+    SamplerState __SDF_SAMPLER(PREFIX);
+
+#define __SDF_SAMPLE_UVW_RAW(PREFIX, UVW) \
+    __SDF_TEXTURE(PREFIX).SampleLevel(__SDF_SAMPLER(PREFIX), UVW, 0)
+
+#define __SDF_SAMPLE_UVW(PREFIX, UVW) \
+    (__SDF_SAMPLE_UVW_RAW(PREFIX, UVW) * __SDF_UNIT_DIST(PREFIX))
+
+#define __SDF_SAMPLE_WORLD_RAW(PREFIX, WORLD) \
+    __SDF_SAMPLE_UVW_RAW(PREFIX, _GRID_WORLD2UVW(PREFIX, WORLD))
+
+#define __SDF_SAMPLE_WORLD(PREFIX, WORLD) \
+    (__SDF_SAMPLE_WORLD_RAW(PREFIX, WORLD) * __SDF_UNIT_DIST(PREFIX))
+
+#define _SDF_SAMPLE(PREFIX, F, P) __SDF_SAMPLE_##F(PREFIX, P)
+
+#endif

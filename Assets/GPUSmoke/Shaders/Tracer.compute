@@ -7,6 +7,7 @@
 #include "ParticleHashGrid.cginc"
 #include "VortexMethod.cginc"
 #include "Grid.cginc"
+#include "SDF.cginc"
 
 _GRID_DEF_UNIFORM(Heat);
 Texture3D<float> uHeatTexture;
@@ -24,6 +25,9 @@ PC_DEF_BUFFER_RW(TracerParticle)
 
 _PC_DEF_UNIFORM(Vortex)
 _PC_DEF_BUFFER(Vortex, VortexParticle)
+
+_SDF_DEF_UNIFORM(SDF);
+_SDF_DEF_TEXTURE(SDF);
 
 float uDeltaTime;
 
@@ -46,7 +50,8 @@ void Simulate(uint3 id : SV_DispatchThreadID) {
     #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
 
-    p.pos += v * uDeltaTime;
+    if (_SDF_SAMPLE(SDF, WORLD, p.pos) >= 0.5)
+        p.pos += v * uDeltaTime;
 
     /* if (p.pos.y <= 10)
         v.y += buoyancy_velocity_from_pos(p.pos);

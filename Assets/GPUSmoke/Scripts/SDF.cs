@@ -54,6 +54,11 @@ namespace GPUSmoke
             shader.SetTexture(kernel, "u" + prefix + "Texture", _texture);
         }
 
+        public void SetShaderProperty<W_, T_>(ParticleCluster<W_, T_> cluster, string prefix = "") where W_ : unmanaged where T_ : IStruct<W_>, new(){
+            SetShaderUniform(cluster.Shader, prefix);
+            SetShaderTexture(cluster.Shader, cluster.SimulateKernel, prefix);            
+        }
+
         public static SDF Bake(Bounds bounds, int max_grid_size, Mesh mesh)
         {
             if (mesh.vertexCount == 0)
