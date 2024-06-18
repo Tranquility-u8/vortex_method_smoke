@@ -59,6 +59,13 @@ namespace GPUSmoke
 
         void Awake()
         {
+            VortexComputeShader = Instantiate(VortexComputeShader);
+            TracerComputeShader = Instantiate(TracerComputeShader);
+            HeatFieldShader = Instantiate(HeatFieldShader);
+            VortexHashGridComputeShader = Instantiate(VortexHashGridComputeShader);
+            DeviceRadixSortComputeShader = Instantiate(DeviceRadixSortComputeShader);
+            OneSweepSortComputeShader = Instantiate(OneSweepSortComputeShader);
+
             VortexMethodConfig vm_config = new() {
                 epsilon = Epsilon,
                 heat_buoyancy_factor = HeatBuoyancyFactor
