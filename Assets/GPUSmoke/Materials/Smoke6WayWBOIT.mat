@@ -104,7 +104,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ClipThreshold: 0.01
+    - _ClipThreshold: 0.05
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -117,10 +117,11 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
+    - _NoiseFactor: 0.005
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _Radius: 1.25
+    - _Radius: 1.2
     - _ReceiveShadows: 1
     - _ShadowFadeIn: 30
     - _ShadowFadeOut: 80
