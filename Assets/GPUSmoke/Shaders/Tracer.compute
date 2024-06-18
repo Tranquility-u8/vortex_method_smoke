@@ -49,15 +49,10 @@ void Simulate(uint3 id : SV_DispatchThreadID) {
     uint s = _PC_IDX(Vortex, 0);
     #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);
-
-    if (_SDF_SAMPLE(SDF, WORLD, p.pos) >= 0.0)
-        p.pos += v * uDeltaTime;
-
-    /* if (p.pos.y <= 10)
-        v.y += buoyancy_velocity_from_pos(p.pos);
     p.pos += v * uDeltaTime;
-    if (p.pos.y > 10)
-        p.pos.y = 10 - abs(v.y) * uDeltaTime; */
+
+    // Check Collision
+    _SDF_FIX_WORLD_POS(SDF, p.pos);
 
     if (p.life >= 0)
         PC_PUSH(SAFE, p);
