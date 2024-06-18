@@ -21,16 +21,20 @@ namespace GPUSmoke
 
                 for (int i = 0; i < mesh.sharedMesh.subMeshCount; ++i)
                 {
-                    var combine = new CombineInstance();
-                    combine.mesh = mesh.sharedMesh;
-                    combine.transform = mesh.transform.localToWorldMatrix;
-                    combine.subMeshIndex = i;
+                    var combine = new CombineInstance
+                    {
+                        mesh = mesh.sharedMesh,
+                        transform = mesh.transform.localToWorldMatrix,
+                        subMeshIndex = i
+                    };
                     combines.Add(combine);
                 }
             }
 
-            var combine_mesh = new Mesh();
-            combine_mesh.indexFormat = index_format;
+            var combine_mesh = new Mesh
+            {
+                indexFormat = index_format
+            };
             combine_mesh.CombineMeshes(combines.ToArray());
             combine_mesh.RecalculateBounds();
             return combine_mesh;
