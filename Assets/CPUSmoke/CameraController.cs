@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,9 +11,9 @@ namespace VortexMethod
         [SerializeField] private float mouseSensitivity = 80.0f;
         [SerializeField] private float speed = 0.3f;
         public bool rotationLock;
-        
-        private Vector3 cameraPosition;  
-        
+
+        private float _xRotation = 0, _yRotation = 0;
+
         private void Awake()
         {
             rotationLock = false;
@@ -27,7 +28,7 @@ namespace VortexMethod
             {
                 RotateView();
             }
-            
+
             Move();
         }
 
@@ -49,13 +50,14 @@ namespace VortexMethod
 
         void RotateView()
         {
-            float mouseX = Input.GetAxis("Mouse X");
-            float mouseY = Input.GetAxis("Mouse Y");
+            float mouse_x = Input.GetAxisRaw("Mouse X") * Time.deltaTime * mouseSensitivity;
+            float mouse_y = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * mouseSensitivity;
 
-            cameraPosition.x -= mouseY * mouseSensitivity * Time.deltaTime;
-            cameraPosition.y += mouseX * mouseSensitivity * Time.deltaTime;
+            _yRotation += mouse_x;
+            _xRotation -= mouse_y;
+            _xRotation = Math.Clamp(_xRotation, -90f, 90f);
 
-            transform.rotation = Quaternion.Euler(cameraPosition.x, cameraPosition.y, 0);
+            transform.rotation = Quaternion.Euler(_xRotation, _yRotation, 0);
         }
     }
 }
