@@ -67,14 +67,13 @@ public class SmokeSourceSelector : MonoBehaviour
         if (drag)
         {
             FixTarget();
-            if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) &&
-                Input.GetKeyDown(KeyCode.C))
+            if (Input.GetKeyDown(KeyCode.C))
             {
                 var copy = Instantiate(_raycastHit.transform.gameObject);
                 SetTarget(copy.transform, SelectionMaterial);
             }
 
-            if (Input.GetKeyDown(KeyCode.Delete))
+            if (Input.GetKeyDown(KeyCode.X))
             {
                 var obj = _target.gameObject;
                 SetTarget(null, null);

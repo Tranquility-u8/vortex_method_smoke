@@ -1079,7 +1079,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1090933100
 Transform:
   m_ObjectHideFlags: 0
@@ -1125,7 +1125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1161647874
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1149,6 +1149,7 @@ MonoBehaviour:
   - pos: {x: 0, y: 0.5, z: 1}
     vor: {x: 10, y: 0, z: 0}
   _smokeSystem: {fileID: 2005683826}
+  _life: 100
 --- !u!4 &1161647875
 Transform:
   m_ObjectHideFlags: 0
@@ -1428,11 +1429,11 @@ MonoBehaviour:
     m_Extent: {x: 32, y: 15, z: 32}
   TimeScale: 1
   Draws:
-  - Material: {fileID: 2100000, guid: cdb87e50568a45637a0a3335110c7d69, type: 2}
+  - Material: {fileID: 2100000, guid: d053dff8b52cfb13fa990d646228cd7c, type: 2}
     Camera: {fileID: 0}
     CastShadows: 0
     ReceiveShadows: 1
-    Layer: 6
+    Layer: 0
   VortexComputeShader: {fileID: 7200000, guid: 38e5c110f73b6c4d48f20c031580f369, type: 3}
   TracerComputeShader: {fileID: 7200000, guid: c63186c0de1a1d8fe811ce332cdec49a, type: 3}
   MaxVortexParticleCount: 65536
@@ -1443,8 +1444,7 @@ MonoBehaviour:
   CollisionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  CollisionRootObjects:
-  - {fileID: 373847810}
+  CollisionRootObjects: []
   CollisionRadius: 0.5
   SDFMargin: 1
   SDFMaxGridSize: 128
@@ -1452,8 +1452,8 @@ MonoBehaviour:
   VortexHashGridComputeShader: {fileID: 7200000, guid: e1dfe32737934c24f850543710bf4029, type: 3}
   DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
   OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
-  VortexHashGridMaxGridSize: 32
-  Epsilon: 0.02
+  VortexHashGridMaxGridSize: 64
+  Epsilon: 0.1
   HeatBuoyancyFactor: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

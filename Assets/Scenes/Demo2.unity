@@ -13902,14 +13902,14 @@ MonoBehaviour:
     m_Bits: 4294967295
   CollisionRootObjects:
   - {fileID: 1782976672}
-  CollisionRadius: 0.8
-  SDFMargin: 2
+  CollisionRadius: 0.5
+  SDFMargin: 1
   SDFMaxGridSize: 640
   SDFTexture: {fileID: 0}
   VortexHashGridComputeShader: {fileID: 7200000, guid: e1dfe32737934c24f850543710bf4029, type: 3}
   DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
   OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
-  VortexHashGridMaxGridSize: 64
+  VortexHashGridMaxGridSize: 80
   Epsilon: 0.02
   HeatBuoyancyFactor: 1
 --- !u!4 &610608084
@@ -15073,7 +15073,7 @@ Transform:
   m_GameObject: {fileID: 655291929}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -288.33, y: 81.85, z: -24.76}
+  m_LocalPosition: {x: -288.33, y: 82.23, z: -24.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15093,7 +15093,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Material: {fileID: 2100000, guid: cea0889ca14d42e4593154852d28368e, type: 2}
   SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  SphereRadius: 0.4
+  SphereRadius: 0.2
 --- !u!1001 &658113358
 PrefabInstance:
   m_ObjectHideFlags: 0
