@@ -17,6 +17,7 @@ namespace GPUSmoke.GPUSorting.Runtime
         protected const int k_radix = 256;
         protected const int k_radixPasses = 4;
         protected const int k_partitionSize = 3840;
+        protected const int k_copySize = 256;
 
         protected const int k_minSize = 1;
         protected const int k_maxSize = 65535 * k_partitionSize;

@@ -98,7 +98,7 @@ namespace GPUSmoke
                         _one_sweep_sorter.SortBitWidth(_cellCountBitWidth, count, _cellIdBuffer, _particleIdBuffer, _sorter_tmp0, _sorter_tmp1, _sorter_tmp2, _sorter_tmp3, _sorter_tmp4, typeof(uint), typeof(uint), true);
                     else
                         Debug.LogError("No Sorter Available");
-                }
+                } 
                 _shader.Dispatch(_resolveKernel, (int)((count + _resolveKernelGroupX - 1) / _resolveKernelGroupX), 1, 1);
             }
         }
