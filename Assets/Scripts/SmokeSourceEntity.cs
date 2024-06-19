@@ -28,7 +28,7 @@ public class SmokeSourceEntity : MonoBehaviour
 
         var mesh_renderer = GetOrAddComponent<MeshRenderer>();
         mesh_renderer.sharedMaterial = Material;
-        mesh_renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        // mesh_renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
         var collider = GetOrAddComponent<SphereCollider>();
         collider.radius = 0.5f;

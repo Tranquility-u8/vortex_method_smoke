@@ -6,10 +6,11 @@ public class SmokeSourceSelector : MonoBehaviour
 {
     public Material HighlightMaterial;
     public Material SelectionMaterial;
+    public LayerMask SceneLayerMask;
     public Camera Camera;
 
     private Transform _target;
-    private float _targetDist;
+    private Vector3 _targetScreenPoint;
     private RaycastHit _raycastHit;
 
     private void Start()
@@ -26,7 +27,31 @@ public class SmokeSourceSelector : MonoBehaviour
         }
         _target = target;
         if (_target != null)
+        {
             _target.GetComponent<MeshRenderer>().sharedMaterial = material;
+
+            if (material == SelectionMaterial)
+            {
+                _targetScreenPoint = Camera.WorldToScreenPoint(_target.transform.position);
+            }
+        }
+    }
+
+    private void FixTarget()
+    {
+        if (_target == null)
+            return;
+        _target.position = Camera.ScreenToWorldPoint(_targetScreenPoint);
+        /* float radius = _target.GetComponent<SmokeSourceEntity>().SphereRadius;
+        if (Physics.CheckSphere(_target.position, radius, SceneLayerMask)) {
+            var ray = Camera.ScreenPointToRay(_targetScreenPoint);
+            float distance = Vector3.Distance(_target.position, ray.origin);
+            if (Physics.SphereCast(ray.origin, radius, ray.direction, out _raycastHit, distance, SceneLayerMask)) {
+                distance = _raycastHit.distance;
+                _target.position = ray.origin + distance * ray.direction;
+                _targetScreenPoint = Camera.WorldToScreenPoint(_target.position);
+            }
+        } */
     }
 
     private Material GetTargetMaterial()
@@ -34,27 +59,23 @@ public class SmokeSourceSelector : MonoBehaviour
         return _target?.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
-    private bool GetAnyMouseButton()
-    {
-        return Input.GetMouseButton(0) || Input.GetMouseButton(1);
-    }
-
     void Update()
     {
         Ray ray = new(Camera.transform.position, Camera.transform.forward);
 
-        bool drag = GetAnyMouseButton() && GetTargetMaterial() == SelectionMaterial;
+        bool drag = Input.GetMouseButton(0) && GetTargetMaterial() == SelectionMaterial;
         if (drag)
         {
-            _target.position = ray.origin + ray.direction * _targetDist;
-
-            if (Input.GetMouseButtonDown(1))
+            FixTarget();
+            if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) &&
+                Input.GetKeyDown(KeyCode.C))
             {
                 var copy = Instantiate(_raycastHit.transform.gameObject);
                 SetTarget(copy.transform, SelectionMaterial);
             }
-            
-            if (Input.GetKeyDown(KeyCode.Delete)) {
+
+            if (Input.GetKeyDown(KeyCode.Delete))
+            {
                 var obj = _target.gameObject;
                 SetTarget(null, null);
                 obj.SetActive(false);
@@ -66,10 +87,8 @@ public class SmokeSourceSelector : MonoBehaviour
         {
             if (Physics.Raycast(ray, out _raycastHit) && _raycastHit.transform.CompareTag("Selectable"))
             {
-                if (GetAnyMouseButton()) {
+                if (Input.GetMouseButton(0))
                     SetTarget(_raycastHit.transform, SelectionMaterial);
-                    _targetDist = Vector3.Distance(ray.origin, _raycastHit.transform.position);
-                }
                 else
                     SetTarget(_raycastHit.transform, HighlightMaterial);
             }
