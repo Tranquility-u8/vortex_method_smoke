@@ -20,6 +20,7 @@ namespace GPUSmoke.GPUSorting.Runtime
         protected int m_kernelGlobalHist = -1;
         protected int m_kernelScan = -1;
         protected int m_digitBinningPass = -1;
+        protected int m_kernelCopy = -1;
 
         protected readonly bool k_keysOnly;
 
@@ -89,12 +90,14 @@ namespace GPUSmoke.GPUSorting.Runtime
                 m_kernelGlobalHist = m_cs.FindKernel("GlobalHistogram");
                 m_kernelScan = m_cs.FindKernel("Scan");
                 m_digitBinningPass = m_cs.FindKernel("DigitBinningPass");
+                m_kernelCopy = m_cs.FindKernel("Copy");
             }
 
             isValid = m_kernelInit >= 0 &&
                         m_kernelGlobalHist >= 0 &&
                         m_kernelScan >= 0 &&
-                        m_digitBinningPass >= 0;
+                        m_digitBinningPass >= 0 &&
+                        m_kernelCopy >= 0;
 
             if (isValid)
             {
@@ -240,6 +243,7 @@ namespace GPUSmoke.GPUSorting.Runtime
 
         private void DispatchBitWidth(
             int maxBitWidth,
+            int numCopyThreadBlocks,
             int numThreadBlocks,
             int globalHistThreadBlocks,
             ComputeBuffer _toSort,
@@ -255,6 +259,8 @@ namespace GPUSmoke.GPUSorting.Runtime
 
             m_cs.SetInt("e_threadBlocks", numThreadBlocks);
             m_cs.Dispatch(m_kernelScan, k_radixPasses, 1, 1);
+
+            bool flip = true;
             for (int radixShift = 0; radixShift < maxBitWidth; radixShift += 8)
             {
                 m_cs.SetInt("e_radixShift", radixShift);
@@ -266,6 +272,15 @@ namespace GPUSmoke.GPUSorting.Runtime
 
                 (_toSort, _alt) = (_alt, _toSort);
                 (_toSortPayload, _altPayload) = (_altPayload, _toSortPayload);
+                flip = !flip;
+            }
+            if (flip == false) {
+                // Copy _alt to _toSort
+                m_cs.SetBuffer(m_kernelCopy, "b_sort", _toSort);
+                m_cs.SetBuffer(m_kernelCopy, "b_sortPayload", _toSortPayload);
+                m_cs.SetBuffer(m_kernelCopy, "b_alt", _alt);
+                m_cs.SetBuffer(m_kernelCopy, "b_altPayload", _altPayload);
+                m_cs.Dispatch(m_kernelCopy, numCopyThreadBlocks, 1, 1);
             }
         }
 
@@ -438,6 +453,7 @@ namespace GPUSmoke.GPUSorting.Runtime
             SetKeyTypeKeywords(keyType);
             SetPayloadTypeKeywords(payloadType);
             SetAscendingKeyWords(shouldAscend);
+            int copyThreadBlocks = DivRoundUp(sortSize, k_copySize);
             int threadBlocks = DivRoundUp(sortSize, k_partitionSize);
             int globalHistThreadBlocks = DivRoundUp(sortSize, k_globalHistPartSize);
             SetStaticRootParameters(
@@ -448,6 +464,7 @@ namespace GPUSmoke.GPUSorting.Runtime
                 tempIndexBuffer);
             DispatchBitWidth(
                 maxBitWidth,
+                copyThreadBlocks,
                 threadBlocks,
                 globalHistThreadBlocks,
                 toSort,

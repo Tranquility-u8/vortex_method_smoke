@@ -20,6 +20,7 @@
 
 #define KEYS_PER_THREAD     15U 
 #define D_DIM               256U
+#define COPY_DIM            256U
 #define PART_SIZE           3840U
 #define D_TOTAL_SMEM        4096U
 
@@ -62,6 +63,22 @@ RWStructuredBuffer<float> b_altPayload;
 #endif
 
 groupshared uint g_d[D_TOTAL_SMEM]; //Shared memory for DigitBinningPass and DownSweep kernels
+
+#pragma kernel Copy
+[numthreads(COPY_DIM, 1, 1)]
+void Copy(uint3 id : SV_DispatchThreadID) {
+    if (id.x >= e_numKeys)
+        return;
+
+#if defined(KEY_UINT) || defined(KEY_INT) || defined(KEY_FLOAT)
+    b_alt[id.x] = b_sort[id.x];
+#endif
+#if defined(SORT_PAIRS)
+#if defined(PAYLOAD_UINT) || defined(PAYLOAD_INT) || defined(PAYLOAD_FLOAT)
+    b_altPayload[id.x] = b_sortPayload[id.x];
+#endif
+#endif
+}
 
 struct KeyStruct
 {
