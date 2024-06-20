@@ -65,8 +65,8 @@ namespace GPUSmoke
 
         // private RTHandle _colorHandle, _depthHandle;
 
-        private RenderTextureDescriptor _accumDescriptor, _revealDescriptor, _destDescriptor;
-        private RTHandle _accumHandle, _revealHandle, _destHandle;
+        private RenderTextureDescriptor _accumDescriptor, _revealDescriptor;
+        private RTHandle _accumHandle, _revealHandle;
 
         private readonly RenderTargetIdentifier[] _identifiers = new RenderTargetIdentifier[2];
 
@@ -90,7 +90,6 @@ namespace GPUSmoke
 
             _accumDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.ARGBHalf);
             _revealDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.R8);
-            _destDescriptor = new(Screen.width, Screen.height, RenderTextureFormat.DefaultHDR);
         }
 
         /* public void Setup(RTHandle color_handle, RTHandle depth_handle) {
@@ -104,12 +103,9 @@ namespace GPUSmoke
             _accumDescriptor.height = cam_tex_descriptor.height;
             _revealDescriptor.width = cam_tex_descriptor.width;
             _revealDescriptor.height = cam_tex_descriptor.height;
-            _destDescriptor.width = cam_tex_descriptor.width;
-            _destDescriptor.height = cam_tex_descriptor.height;
 
             RenderingUtils.ReAllocateIfNeeded(ref _accumHandle, _accumDescriptor);
             RenderingUtils.ReAllocateIfNeeded(ref _revealHandle, _revealDescriptor);
-            RenderingUtils.ReAllocateIfNeeded(ref _destHandle, _destDescriptor);
 
             _identifiers[0] = _accumHandle;
             _identifiers[1] = _revealHandle;
@@ -147,8 +143,8 @@ namespace GPUSmoke
 
             // Blend
             cmd.Clear();
-            Blit(cmd, color_handle, _destHandle, _blendMaterial);
-            Blit(cmd, _destHandle, color_handle);
+            cmd.SetRenderTarget(color_handle);
+            cmd.DrawProcedural(Matrix4x4.identity, _blendMaterial, 0, MeshTopology.Triangles, 3, 1); // Screen Triangle
             context.ExecuteCommandBuffer(cmd);
 
             CommandBufferPool.Release(cmd);
@@ -170,7 +166,6 @@ namespace GPUSmoke
 #endif
             DestroyUtil.Release(ref _accumHandle);
             DestroyUtil.Release(ref _revealHandle);
-            DestroyUtil.Release(ref _destHandle);
         }
 
     }
