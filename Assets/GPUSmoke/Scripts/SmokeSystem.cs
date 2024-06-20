@@ -59,6 +59,7 @@ namespace GPUSmoke
 
         void Awake()
         {
+            //Bounds.center+=transform.position;
             VortexComputeShader = Instantiate(VortexComputeShader);
             TracerComputeShader = Instantiate(TracerComputeShader);
             HeatFieldShader = Instantiate(HeatFieldShader);

@@ -36,7 +36,8 @@ public class RocketLauncher : MonoBehaviour
     {
         particleSystem.Play();
         StartCoroutine(OnSmoke());
-        GameObject rocket = Instantiate(rocketPrefab, launcherPoint.position, launcherPoint.rotation);
+        var RandomRotation = launcherPoint.rotation * Quaternion.Euler(Random.Range(-3, 3), Random.Range(-3, 3), Random.Range(-3, 3));
+        GameObject rocket = Instantiate(rocketPrefab, launcherPoint.position, RandomRotation);
         rocket.GetComponentInChildren<SmokeSource>().SmokeSystem = rocketSmokeSystem;
     }
 

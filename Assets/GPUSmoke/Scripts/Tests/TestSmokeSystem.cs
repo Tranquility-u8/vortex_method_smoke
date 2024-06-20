@@ -11,7 +11,10 @@ namespace GPUSmoke
         [SerializeField] private List<ParticleConfig> vortex_particle_configs;
         [SerializeField] private SmokeSystem _smokeSystem;
         [SerializeField] private float _life = 100.0f;
-        
+        public float scaleSpawn = 3.0f;
+        public float vortexSpawnRadius = 1.0f;
+        public float vorScale = 0.75f;
+        public float tracerOffset = -1.0f;
 
         [System.Serializable]
         private class ParticleConfig 
@@ -40,14 +43,14 @@ namespace GPUSmoke
             NUM_VORTEX = vortex_particle_configs.Count;
 
             for (int i = 0; i < NUM_VORTEX; i++)
-                _smokeSystem.VortexEmits.Add(new VortexParticle(transform.position + vortex_particle_configs[i].pos, vortex_particle_configs[i].vor, _life));
+                _smokeSystem.VortexEmits.Add(new VortexParticle(transform.position + vortex_particle_configs[i].pos*vortexSpawnRadius, vortex_particle_configs[i].vor*vorScale, _life));
 
             for (int i = 0; i < NUM_TRACER; i++)
             {
-                float x = transform.position.x + Random.Range(-1.5f, 1.5f);
-                float y = transform.position.y + Random.Range(-0.5f, 0.5f);
-                float z = transform.position.z + Random.Range(-1.5f, 1.5f);
-                _smokeSystem.TracerEmits.Add(new TracerParticle(new Vector3(x, y, z), _life));
+                Vector3 spawnPos = Random.insideUnitSphere * scaleSpawn;
+                spawnPos.y *= 1.2f;
+                spawnPos.y += tracerOffset;
+                _smokeSystem.TracerEmits.Add(new TracerParticle(transform.position + spawnPos, _life));
             }
             
             // _smokeSystem.HeatField.AddEntry(new HeatFieldEntry(Vector3.zero, 300.0f, 2.0f));

@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 3830293971392918912}
   - component: {fileID: 3734081292852804672}
   - component: {fileID: 2960745295830546672}
+  - component: {fileID: 5527706527060081674}
+  - component: {fileID: -6725381051206634718}
   m_Layer: 0
   m_Name: Rocket
   m_TagString: Untagged
@@ -74,8 +76,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da7adae678d0a2e4f856b1fac2b03355, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  launchForce: 45
+  launchForce: 43.4
   y_border: 0
+--- !u!114 &5527706527060081674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778869090933145706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0dcd0af8e52493ba7c25a84792e0a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 1338017871918850, guid: b93e4ddba4baebf47b7fb121d99b4a1e, type: 3}
+  smokeSourcePrefab: {fileID: 0}
+  explosionForce: 1000
+  explosionRadius: 2
+  SmokeSystem: {fileID: 0}
+  rb: {fileID: 0}
+--- !u!136 &-6725381051206634718
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778869090933145706}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.12
+  m_Height: 0.9
+  m_Direction: 2
+  m_Center: {x: 0, y: -0.08, z: 1.17}
 --- !u!1 &8893400397270813405
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,6 +174,7 @@ MonoBehaviour:
   MaxVorticity: 6
   MinLifespan: 0.2
   MaxLifespan: 1
+  SmokeType: 0
 --- !u!1001 &6397948763208034215
 PrefabInstance:
   m_ObjectHideFlags: 0

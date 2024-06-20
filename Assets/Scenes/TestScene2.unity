@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -277,7 +276,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &258623131
 Transform:
   m_ObjectHideFlags: 0
@@ -844,7 +843,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -4}
+  m_LocalPosition: {x: 0, y: 5.01, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -888,12 +887,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1138,17 +1137,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd62ec50f93fcd34db5a2be9d891a643, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NUM_TRACER: 2000
+  NUM_TRACER: 10000
   vortex_particle_configs:
-  - pos: {x: 1, y: 0.5, z: 0}
-    vor: {x: 0, y: 0, z: -10}
-  - pos: {x: -1, y: 0.5, z: 0}
-    vor: {x: 0, y: 0, z: 10}
-  - pos: {x: 0, y: 0.5, z: -1}
-    vor: {x: -10, y: 0, z: 0}
-  - pos: {x: 0, y: 0.5, z: 1}
-    vor: {x: 10, y: 0, z: 0}
+  - pos: {x: 2, y: 0.5, z: 0}
+    vor: {x: 0, y: 0, z: -7}
+  - pos: {x: -2, y: 0.5, z: 0}
+    vor: {x: 0, y: 0, z: 7}
+  - pos: {x: 0, y: 0.5, z: -2}
+    vor: {x: -7, y: 0, z: 0}
+  - pos: {x: 0, y: 0.5, z: 2}
+    vor: {x: 7, y: 0, z: 0}
+  - pos: {x: 1.4, y: 0.5, z: 1.4}
+    vor: {x: 5, y: 0, z: -5}
+  - pos: {x: 1.4, y: 0.5, z: -1.4}
+    vor: {x: -5, y: 0, z: -5}
+  - pos: {x: -1.4, y: 0.5, z: -1.4}
+    vor: {x: -5, y: 0, z: 5}
+  - pos: {x: -1.4, y: 0.5, z: 1.4}
+    vor: {x: 5, y: 0, z: 5}
   _smokeSystem: {fileID: 2005683826}
+  _life: 100
+  scaleSpawn: 3
+  vortexSpawnRadius: 1
+  vorScale: 0.75
+  tracerOffset: -0.75
 --- !u!4 &1161647875
 Transform:
   m_ObjectHideFlags: 0
@@ -1157,12 +1169,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1161647873}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 2005683822}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1292946907
 GameObject:
@@ -1309,6 +1321,7 @@ MonoBehaviour:
   MaxVorticity: 5
   MinLifespan: 3
   MaxLifespan: 5
+  SmokeType: 0
 --- !u!4 &1560767386
 Transform:
   m_ObjectHideFlags: 0
@@ -1364,6 +1377,7 @@ MonoBehaviour:
   MaxVorticity: 5
   MinLifespan: 3
   MaxLifespan: 5
+  SmokeType: 0
 --- !u!4 &1682061160
 Transform:
   m_ObjectHideFlags: 0
@@ -1408,7 +1422,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1161647875}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2005683826
@@ -1428,7 +1443,7 @@ MonoBehaviour:
     m_Extent: {x: 32, y: 15, z: 32}
   TimeScale: 1
   Draws:
-  - Material: {fileID: 2100000, guid: cdb87e50568a45637a0a3335110c7d69, type: 2}
+  - Material: {fileID: 2100000, guid: 006adedaed4644eae82e4d1578e6365f, type: 2}
     Camera: {fileID: 0}
     CastShadows: 0
     ReceiveShadows: 1
@@ -1438,7 +1453,7 @@ MonoBehaviour:
   MaxVortexParticleCount: 65536
   MaxTracerParticleCount: 1048576
   HeatFieldShader: {fileID: 7200000, guid: 2093a7ddb71a221eda939fd4db958a2e, type: 3}
-  HeatFieldMaxGridSize: 32
+  HeatFieldMaxGridSize: 64
   HeatFieldMaxEntryCount: 1024
   CollisionLayerMask:
     serializedVersion: 2
@@ -1467,6 +1482,5 @@ SceneRoots:
   - {fileID: 1682061160}
   - {fileID: 1560767386}
   - {fileID: 1090933100}
-  - {fileID: 1161647875}
   - {fileID: 188746888}
   - {fileID: 373847811}

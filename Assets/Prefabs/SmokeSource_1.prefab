@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &164622066400565390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5366553508624009337}
+  - component: {fileID: 6481373496921042435}
+  - component: {fileID: 8517632176874042619}
+  m_Layer: 0
+  m_Name: SmokeSource_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5366553508624009337
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164622066400565390}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -252.35, y: 99.96, z: -9.68}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6481373496921042435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164622066400565390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39511e5955bac1a8fb2884817150227c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmokeSystem: {fileID: 0}
+  Heat: 13.5
+  HeatStddev: 1.73
+  VortexSpawnRadius: 0.85
+  VortexSpawnTime: 0.92
+  TracerSpawnRadius: 3.35
+  TracerSpawnTime: 0.005
+  MinVorticity: 2
+  MaxVorticity: 3
+  MinLifespan: 1.56
+  MaxLifespan: 3.78
+  SmokeType: 0
+--- !u!114 &8517632176874042619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 164622066400565390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2cd3a05b73bd4cc6a97d7c42378efc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmokeSource: {fileID: 6481373496921042435}
+  lifeSpan: 10
+  expandFactor: 0.03
