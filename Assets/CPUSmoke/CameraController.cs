@@ -11,7 +11,7 @@ namespace VortexMethod
         [SerializeField] private float mouseSensitivity = 80.0f;
         [SerializeField] private float speed = 0.3f;
         public bool rotationLock;
-        private bool _locked = true;
+        private bool _locked = false;
 
         private float _xRotation = 0, _yRotation = 0;
 

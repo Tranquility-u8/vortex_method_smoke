@@ -12997,6 +12997,77 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4497011438508190, guid: 7446a392a730ac14d9cc70d21cf7ace0, type: 3}
   m_PrefabInstance: {fileID: 572217817}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &573004814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 573004815}
+  - component: {fileID: 573004817}
+  - component: {fileID: 573004816}
+  m_Layer: 0
+  m_Name: SmokeSource1 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &573004815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573004814}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -311.43, y: 70, z: 9.87}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 610608084}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &573004816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573004814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aa2c39ba2010bcec9f2d68c27f9f6c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Material: {fileID: 2100000, guid: cea0889ca14d42e4593154852d28368e, type: 2}
+  SphereMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  SphereRadius: 0.4
+--- !u!114 &573004817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 573004814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39511e5955bac1a8fb2884817150227c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmokeSystem: {fileID: 610608083}
+  Heat: 200
+  HeatStddev: 4
+  VortexSpawnRadius: 0.15
+  VortexSpawnTime: 0.05
+  TracerSpawnRadius: 0.15
+  TracerSpawnTime: 0.005
+  MinVorticity: 0
+  MaxVorticity: 2
+  MinLifespan: 4
+  MaxLifespan: 6
 --- !u!1001 &574885066
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13912,7 +13983,7 @@ MonoBehaviour:
   VortexHashGridMaxGridSize: 80
   Epsilon: 0.05
   HeatBuoyancyFactor: 1
-  InitialVelocity: {x: 0, y: 1, z: 0}
+  InitialVelocity: {x: 0, y: 0.6, z: 0}
 --- !u!4 &610608084
 Transform:
   m_ObjectHideFlags: 0
@@ -13929,6 +14000,7 @@ Transform:
   - {fileID: 873215626}
   - {fileID: 395654912}
   - {fileID: 1503530260}
+  - {fileID: 573004815}
   - {fileID: 1927823660}
   - {fileID: 655291931}
   - {fileID: 2137452099}
