@@ -7966,16 +7966,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SmokeSystem: {fileID: 610608083}
-  Heat: 50
+  Heat: 200
   HeatStddev: 4
   VortexSpawnRadius: 0.15
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.15
   TracerSpawnTime: 0.005
-  MinVorticity: 2
-  MaxVorticity: 7
-  MinLifespan: 3
-  MaxLifespan: 5
+  MinVorticity: 0
+  MaxVorticity: 2
+  MinLifespan: 4
+  MaxLifespan: 6
 --- !u!114 &395654914
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13910,8 +13910,9 @@ MonoBehaviour:
   DeviceRadixSortComputeShader: {fileID: 7200000, guid: dd9e6c4b54e463c409512ef8efb72fbd, type: 3}
   OneSweepSortComputeShader: {fileID: 7200000, guid: ada8f21ffa313c3458fb057e5638d084, type: 3}
   VortexHashGridMaxGridSize: 80
-  Epsilon: 0.02
+  Epsilon: 0.05
   HeatBuoyancyFactor: 1
+  InitialVelocity: {x: 0, y: 1, z: 0}
 --- !u!4 &610608084
 Transform:
   m_ObjectHideFlags: 0
@@ -15060,8 +15061,8 @@ MonoBehaviour:
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.25
   TracerSpawnTime: 0.005
-  MinVorticity: 2
-  MaxVorticity: 8
+  MinVorticity: 0
+  MaxVorticity: 2
   MinLifespan: 3
   MaxLifespan: 8
 --- !u!4 &655291931
@@ -15073,7 +15074,7 @@ Transform:
   m_GameObject: {fileID: 655291929}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -288.33, y: 81.929, z: -24.76}
+  m_LocalPosition: {x: -288.33, y: 82.26, z: -24.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19043,16 +19044,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SmokeSystem: {fileID: 610608083}
-  Heat: 40
+  Heat: 200
   HeatStddev: 4
   VortexSpawnRadius: 0.15
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.15
   TracerSpawnTime: 0.005
-  MinVorticity: 2
-  MaxVorticity: 7
-  MinLifespan: 3
-  MaxLifespan: 5
+  MinVorticity: 0
+  MaxVorticity: 2
+  MinLifespan: 4
+  MaxLifespan: 6
 --- !u!114 &873215628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31889,16 +31890,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SmokeSystem: {fileID: 610608083}
-  Heat: 50
+  Heat: 200
   HeatStddev: 4
   VortexSpawnRadius: 0.15
   VortexSpawnTime: 0.05
   TracerSpawnRadius: 0.15
   TracerSpawnTime: 0.005
-  MinVorticity: 2
-  MaxVorticity: 7
-  MinLifespan: 3
-  MaxLifespan: 5
+  MinVorticity: 0
+  MaxVorticity: 2
+  MinLifespan: 4
+  MaxLifespan: 6
 --- !u!114 &1503530262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41490,7 +41491,7 @@ Transform:
   m_GameObject: {fileID: 1927823659}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -315.17, y: 77.68, z: -9.45}
+  m_LocalPosition: {x: -315.17, y: 77.914, z: -9.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41515,10 +41516,10 @@ MonoBehaviour:
   VortexSpawnTime: 0.08
   TracerSpawnRadius: 0.15
   TracerSpawnTime: 0.005
-  MinVorticity: 2
-  MaxVorticity: 5
-  MinLifespan: 0.1
-  MaxLifespan: 1.5
+  MinVorticity: 0
+  MaxVorticity: 2
+  MinLifespan: 1
+  MaxLifespan: 4
 --- !u!114 &1927823662
 MonoBehaviour:
   m_ObjectHideFlags: 0
