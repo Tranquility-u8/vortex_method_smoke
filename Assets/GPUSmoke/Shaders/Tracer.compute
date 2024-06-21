@@ -30,11 +30,7 @@ _SDF_DEF_UNIFORM(SDF);
 _SDF_DEF_TEXTURE(SDF);
 
 float uDeltaTime;
-
-float buoyancy_velocity_from_pos(in const float3 pos) {
-    float3 uvw = _GRID_WORLD2UVW(Heat, pos);
-    return uHeatTexture.SampleLevel(sampler_uHeatTexture, uvw, 0) * _VM_HEAT_BUOYANCY_FACTOR(VM);
-}
+float3 uInitialVelocity;
 
 [numthreads(GROUP_SIZE_X, 1, 1)]
 void Simulate(uint3 id : SV_DispatchThreadID) {
@@ -45,7 +41,7 @@ void Simulate(uint3 id : SV_DispatchThreadID) {
     TracerParticle p = PC_GET(UNSAFE, src_idx);
     p.life -= uDeltaTime;
 
-    float3 v = float3(0, buoyancy_velocity_from_pos(p.pos), 0);
+    float3 v = uInitialVelocity;
     uint s = _PC_IDX(Vortex, 0);
     #define REDUCER(P_ID) v += velocity_from_pos_vor(p.pos, pos_vor_from_vortex_particle(uVortexParticles[s + P_ID]));
     _PHG_REDUCE_NEIGHBOUR(Hash, p.pos, REDUCER);

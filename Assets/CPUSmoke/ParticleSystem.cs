@@ -8,17 +8,17 @@ namespace VortexMethod
     {
         /// <summary>
         /// 
-        /// TODO LISTS¿
-        /// 1¿GPU¿¿
-        /// 2¿¿¿¿¿¿
-        /// 3¿¿¿¿¿¿
-        /// 4¿Treecode¿¿
+        /// TODO LISTSï¿½
+        /// 1ï¿½GPUï¿½ï¿½
+        /// 2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// 3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        /// 4ï¿½Treecodeï¿½ï¿½
         /// 
         /// </summary>
         /// 
         [Header("Particle")]
-        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //¿¿¿¿
-        [SerializeField] [Range(0f, 0.1f)] private float EPS; //¿¿¿¿
+        [SerializeField] [Range(0f, 1f)] private float Dt = 0.1f; //ï¿½ï¿½ï¿½ï¿½
+        [SerializeField] [Range(0f, 0.1f)] private float EPS; //ï¿½ï¿½ï¿½ï¿½
         
         private int NUM_VORTEX;
         [SerializeField] private int NUM_TRACER;
@@ -29,10 +29,10 @@ namespace VortexMethod
         [SerializeField] [Range(1, 10)] private float HEAT_X_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Y_SCALE;
         [SerializeField] [Range(1, 10)] private float HEAT_Z_SCALE;
-        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //¿¿¿¿¿
-        private float HEAT_GRID_SIZE; //¿¿¿¿
-        private float HEAT_CENTER_DEGREE = 1f; //¿¿¿¿
-        [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR; //¿¿¿¿
+        [SerializeField] [Range(3, 65)] private int HEAT_VERTEX_NUM; //ï¿½ï¿½ï¿½ï¿½ï¿½
+        private float HEAT_GRID_SIZE; //ï¿½ï¿½ï¿½ï¿½
+        private float HEAT_CENTER_DEGREE = 1f; //ï¿½ï¿½ï¿½ï¿½
+        [SerializeField] [Range(0, 0.005f)] private float HEAT_BUOYANCY_FACTOR; //ï¿½ï¿½ï¿½ï¿½
 
         [Header("Particle Prefab")]
         [SerializeField] private GameObject prefab;
@@ -65,7 +65,7 @@ namespace VortexMethod
             if (Input.GetKeyDown(KeyCode.Return))
             {
 #if UNITY_EDITOR
-                Debug.Log("==========¿¿==========");
+                Debug.Log("==========ï¿½ï¿½==========");
 #endif
                 UpdateParticle();
             }
@@ -100,7 +100,7 @@ namespace VortexMethod
         {
             int medium = HEAT_VERTEX_NUM / 2;
 
-            // ¿¿¿¿¿¿/¿¿¿
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½
             heat_field = new List<List<List<float>>>();
             
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -130,8 +130,8 @@ namespace VortexMethod
                 heat_field.Add(heat2d);
             }
 
-            // ¿¿¿¿¿¿
-            // vector.x => x¿¿ vector.y => z¿¿
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // vector.x => xï¿½ï¿½ vector.y => zï¿½ï¿½
             vortex_field = new List<List<List<Vector2>>>();
 
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
@@ -149,9 +149,9 @@ namespace VortexMethod
                 vortex_field.Add(vortex2d);
             }
 
-            // ¿¿¿¿¿¿¿¿¿
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             // curl(F) = (dFz/dy - dFy/dz) x + (dFx/dz + dFz/dx)y + (dFy/dx + dFx/dy)z 
-            // ¿¿¿¿¿¿¿¿¿dFx = dFz = 0, ¿¿curl(F) = (dFy/dz)x + (dFy/dx)z
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½dFx = dFz = 0, ï¿½ï¿½curl(F) = (dFy/dz)x + (dFy/dx)z
             for (int i = 0; i < HEAT_VERTEX_NUM; i++)
             {
 
@@ -187,7 +187,7 @@ namespace VortexMethod
                             curlF_z = heat_field[i + 1][j][k] - heat_field[i - 1][j][k];
                         }
 
-                        vortex_field[i][j][k] = new Vector2(curlF_x, curlF_z);
+                        vortex_field[i][j][k] = new Vector2(-curlF_x, curlF_z);
 
                     }
 
@@ -231,7 +231,7 @@ namespace VortexMethod
         {
             int median = HEAT_VERTEX_NUM / 2;
 
-            //¿¿¿¿¿
+            //ï¿½ï¿½ï¿½ï¿½ï¿½
             for(int i = 0; i < NUM_VORTEX; i++)
             {
                 Vector3 position = vortex_particles[i].data.pos;
@@ -257,7 +257,7 @@ namespace VortexMethod
                 float left_z = position.z / HEAT_GRID_SIZE + median - z;
                 float right_z = 1 - left_z;
 
-                //¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿
+                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 float increment_x = (
                      right_x * right_y * right_z * vortex_field[x][y][z].x + 
                      right_x * right_y * left_z * vortex_field[x][y][z + 1].x +
@@ -281,7 +281,7 @@ namespace VortexMethod
                 vortex_particles[i].data.vor += new Vector3(increment_x * Dt, 0f, increment_z * Dt);
             }
 
-            //¿¿¿¿¿¿¿
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             for (int i = 0; i < NUM_VORTEX; i++)
             {
                 tmp_vortex_particles[i] = vortex_particles[i];

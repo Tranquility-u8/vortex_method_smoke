@@ -43,6 +43,7 @@ namespace GPUSmoke
         [Header("Vortex Method")]
         public float Epsilon;
         public float HeatBuoyancyFactor;
+        public Vector3 InitialVelocity;
 
         private VortexParticleCluster _vortexCluster;
         private TracerParticleCluster _tracerCluster;
@@ -90,6 +91,10 @@ namespace GPUSmoke
             
             _sdf.SetShaderProperty(_vortexCluster, "SDF");
             _sdf.SetShaderProperty(_tracerCluster, "SDF");
+
+            float[] init_vel = new float[3]{InitialVelocity.x, InitialVelocity.y, InitialVelocity.z};
+            _vortexCluster.Shader.SetFloats("uInitialVelocity", init_vel);
+            _tracerCluster.Shader.SetFloats("uInitialVelocity", init_vel);
         }
 
         void OnDisable()
@@ -118,6 +123,7 @@ namespace GPUSmoke
 
             bool vortex_flip = _flip;
             int vortex_count = 0;
+            
             _vortexCluster.Simulate(_flip, time_step, (bool flip, int count) => {
                 vortex_flip = flip;
                 vortex_count = count;
