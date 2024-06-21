@@ -104,7 +104,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _ClipThreshold: 0.01
+    - _ClipThreshold: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
@@ -117,11 +117,11 @@ Material:
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
-    - _NoiseFactor: 0.005
+    - _NoiseFactor: 0.17
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _Radius: 1.5
+    - _Radius: 0.29
     - _ReceiveShadows: 1
     - _ShadowFadeIn: 30
     - _ShadowFadeOut: 80
@@ -134,7 +134,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.23270425, g: 0.19538373, b: 0.19538373, a: 0.23529412}
+    - _BaseColor: {r: 0.23270422, g: 0.1953837, b: 0.1953837, a: 0.09803922}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
