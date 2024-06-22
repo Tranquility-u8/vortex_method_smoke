@@ -111,7 +111,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
-    - _Radius: 0.01
+    - _Radius: 0.05
     - _ReceiveShadows: 1
     - _ShadowFadeIn: 30
     - _ShadowFadeOut: 80

@@ -11,25 +11,38 @@ namespace VortexMethod
         [SerializeField] private float mouseSensitivity = 80.0f;
         [SerializeField] private float speed = 0.3f;
         public bool rotationLock;
+        private bool _locked = false;
 
         private float _xRotation = 0, _yRotation = 0;
+
+        private void SetCursorMode(bool locked)
+        {
+            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+            Cursor.visible = !locked;
+        }
 
         private void Awake()
         {
             rotationLock = false;
-            //Cursor.lockState = CursorLockMode.Locked;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            SetCursorMode(_locked);
         }
 
         void Update()
         {
-            if (!rotationLock)
+            if (_locked)
             {
-                RotateView();
-            }
+                if (!rotationLock)
+                {
+                    RotateView();
+                }
 
-            Move();
+                Move();
+            }
+            
+            if (Input.GetKeyDown(KeyCode.Escape)) {
+                _locked = !_locked;
+                SetCursorMode(_locked);
+            }
         }
 
         void Move()
